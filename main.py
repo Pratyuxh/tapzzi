@@ -1,14 +1,7 @@
-import json
 import os
 from flask import Flask, jsonify, request, make_response, render_template, flash, redirect
-from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from flask_swagger_ui import get_swaggerui_blueprint
-from flask_cors import CORS
-from flask_restful import Api, Resource, reqparse
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-from pymongo import MongoClient
-from bson.json_util import dumps
 
 #MongoDB Integration
 app = Flask(__name__)
