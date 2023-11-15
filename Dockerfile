@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 8080
 
 ENV FLASK_APP=app.py
 
