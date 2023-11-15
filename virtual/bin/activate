@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/pratyushsharma/booking/virtual"
+VIRTUAL_ENV="/Users/pratyushsharma/Documents/tapzzi-api/virtual"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
