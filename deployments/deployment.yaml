@@ -20,6 +20,6 @@ spec:
           image: registry.digitalocean.com/fabs/tapzzi-backend:${{ env.IMAGE_TAG }}
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: 8080
       imagePullSecrets:
         - name: fabs
