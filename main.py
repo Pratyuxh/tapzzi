@@ -17,6 +17,7 @@ mongo_db_url = os.environ.get("MONGO_DB_CONN_STRING")
 client = MongoClient(mongo_db_url)
 db = client['tapzzi'] 
 
+#Swagger Integration
 SWAGGER_URL = '/swagger'  # URL for exposing Swagger UI (without trailing '/')
 API_URL = '/static/swagger.json'  # Our API url (can of course be a local resource)
 
