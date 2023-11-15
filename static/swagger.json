@@ -1,0 +1,1256 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "SuperMindsIT",
+    "version": "1.0.0",
+    "title": "Tapzzi API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+      {
+        "url": "/",
+        "description": "Production server"
+      }
+    ],
+  "tags": [
+      {
+        "name": "Games",
+        "description": "API for Games. "
+      },
+      {
+        "name": "Wallpapers",
+        "description": "API for Wallpapers. "
+      },
+      {
+        "name": "Tones",
+        "description": "API for Tones. "
+      }
+    ],
+    "paths": {
+      "/games": {
+        "get": {
+          "tags": [
+            "Games"
+          ],
+          "summary": "Return Games",
+          "description": "This endpoint will get all Games",
+          "responses": {
+            "200": {
+              "description": "Games Data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/games"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Games"
+          ],
+          "summary": "Create a new Game",
+          "description": "This endpoint will create Game",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "description": "Game Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/game"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Game Created",
+              "content": {
+                "application/json": {
+                "schema": {
+                "$ref": "#/serverResponseExample/createGameSuccess"
+                  }
+                }
+              }
+            }, 
+            "400": {
+              "description": "Bad Request.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/createGameError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/games/{id}": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the game that we want to match",
+            "type": "string"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Games"
+          ],
+          "summary": "Get Game with given ID",
+          "description": "This endpoint will get Game by ID.",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "Game ID",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Game Data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/getGameByIdSuccess"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Update a Game by ID",
+          "description": "This endpoint will update a game by ID",
+          "tags": [
+            "Games"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "Update Game",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Update game",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/game"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Game Data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/updateGameByIdSuccess"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete Game by ID",
+          "description": "This API Endpoint will delete Game by ID",
+          "tags": [
+            "Games"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "Delete game",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Game Data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/deleteGameByIdSuccess"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/wallpapers": {
+          "get": {
+            "tags": [
+              "Wallpapers"
+            ],
+            "summary": "Returns Wallpapers",
+            "description": "This endpoint will get all wallpapers",
+            "responses": {
+              "200": {
+                "description": "Wallpapers Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/wallpapers"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Wallpapers"
+            ],
+            "summary": "Create a new Wallpaper",
+            "description": "This endpoint will create new wallpaper",
+            "requestBody": {
+              "description": "Wallpaper Request Object",
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/wallpaper"
+                  }
+                }
+              }
+            },
+            "produces": [
+              "application/json"
+            ],
+            "responses": {
+              "201": {
+                "description": "Wallpaper Created",
+                "content": {
+                  "application/json": {
+                  "schema": {
+                  "$ref": "#/serverResponseExample/createWallpaperSuccess"
+                    }
+                  }
+                }
+              }, 
+              "400": {
+                "description": "Bad Request.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/createWallpaperError"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+      },
+      "/wallpapers/{id}": {
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the Wallpaper that we want to match",
+              "type": "string"
+            }
+          ],
+          "get": {
+            "tags": [
+              "Wallpapers"
+            ],
+            "summary": "Get Wallpaper with given ID",
+            "description": "This endpoint will create Wallpaper with given id",
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "description": "Wallpaper id",
+                "schema": {
+                  "$ref": "#/components/schemas/id"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Wallpaper Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getWallpaperByIdSuccess"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getWallpaperByIdNotFoundError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "put": {
+            "summary": "Update a Wallpaper by ID",
+            "description": "This endpoint will update Wallpaper by ID",
+            "tags": [
+              "Wallpapers"
+            ],
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "description": "Wallpapers",
+                "schema": {
+                  "$ref": "#/components/schemas/id"
+                }
+              }
+            ],
+            "requestBody": {
+              "description": "Update a Wallpaper",
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/wallpaper"
+                  }
+                }
+              }
+            },
+            "produces": [
+              "application/json"
+            ],
+            "responses": {
+              "200": {
+                "description": "Wallpaper Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/updateWallpaperByIdSuccess"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getWallpaperByIdNotFoundError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "delete": {
+            "summary": "Delete Wallpaper by ID",
+            "description": "This endpoint will Delete Wallpaper by ID",
+            "tags": [
+              "Wallpapers"
+            ],
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "description": "Wallpaper",
+                "schema": {
+                  "$ref": "#/components/schemas/id"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Wallpaper Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/deleteWallpaperByIdSuccess"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getWallpaperByIdNotFoundError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+      },
+      "/tones": {
+          "get": {
+            "tags": [
+              "Tones"
+            ],
+            "summary": "Return tones",
+            "description": "This endpoint will get tones",
+            "responses": {
+              "200": {
+                "description": "Tones Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/tones"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Tones"
+            ],
+            "summary": "Create a new tone",
+            "description": "This endpoint will create a new tone",
+            "requestBody": {
+              "description": "tone Object",
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/tones"
+                  }
+                }
+              }
+            },
+            "produces": [
+              "application/json"
+            ],
+            "responses": {
+              "201": {
+                "description": "Tone Created",
+                "content": {
+                  "application/json": {
+                  "schema": {
+                  "$ref": "#/serverResponseExample/createToneSuccess"
+                    }
+                  }
+                }
+              }, 
+              "400": {
+                "description": "Bad Request.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/createToneError"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+      },
+      "/tones/{id}": {
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the Tone that we want to match",
+              "type": "string"
+            }
+          ],
+          "get": {
+            "tags": [
+              "Tones"
+            ],
+            "summary": "Get tone with given ID",
+            "description": "This endpoint will get tone by ID",
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "description": "tone id",
+                "schema": {
+                  "$ref": "#/components/schemas/id"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Tone Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getToneByIdSuccess"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getToneByIdNotFoundError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "put": {
+            "summary": "Update a Tone by ID",
+            "description": "This endpoint will update Tone by ID",
+            "tags": [
+              "Tones"
+            ],
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "description": "Update Tone",
+                "schema": {
+                  "$ref": "#/components/schemas/id"
+                }
+              }
+            ],
+            "requestBody": {
+              "description": "Update Tone Object",
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/tone"
+                  }
+                }
+              }
+            },
+            "produces": [
+              "application/json"
+            ],
+            "responses": {
+              "200": {
+                "description": "Tone Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/updateToneByIdSuccess"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getToneByIdNotFoundError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "delete": {
+            "summary": "Delete Tone by ID",
+            "description": "This endpoint will Delete Tone by ID",
+            "tags": [
+              "Tones"
+            ],
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "description": "Delete Tone",
+                "schema": {
+                  "$ref": "#/components/schemas/id"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Tone Data",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/deleteToneByIdSuccess"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Unauthorized Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/unauthorizedError"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/getToneByIdNotFoundError"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server Error",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/serverResponseExample/serverError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+      }
+    },
+  "components": {
+      "bearerAuth":{
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "schemas": {
+        "id": {
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        },
+        "game": {
+          "type": "object",
+          "properties": {
+              "description": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "imageUrl": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "title": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "iframe": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "thumbnail": {
+                  "type": "string",
+                  "format": "string"
+                }
+          }
+        },
+        "tone": {
+          "type": "object",
+          "properties": {
+                "description": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "audio": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "Downloads": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "title": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "urlTitle": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "visited": {
+                  "type": "string",
+                  "format": "string"
+                }
+          }
+        },
+        "wallpaper": {
+          "type": "object",
+          "properties": {
+              "description": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "imageURL": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "title": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "downloads": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "visited": {
+                  "type": "string",
+                  "format": "string"
+                }
+          }
+        },
+        "games": {
+          "type": "object",
+          "properties": {
+            "game": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/game"
+            }
+          }
+       }
+        },
+        "tones": {
+          "type": "object",
+          "properties": {
+            "tone": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/tone"
+            }
+          }
+       }
+        },
+        "wallpapers": {
+          "type": "object",
+          "properties": {
+            "contact": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/wallpaper"
+            }
+          }
+       }
+        }
+      }
+    },
+  "serverResponseExample": {
+    "notFound": {
+      "code": 404,
+      "message": "Not found"
+    },
+    "serverError": {
+      "example": {
+        "code": 500,
+        "message": "Internal server error"
+      }
+    },
+    "unauthorizedError": {
+      "example": {
+       "code": 401,
+       "message": "Please authenticate"
+      }
+    },
+    "createGameError": {
+      "example": {
+        "code": 400,
+        "message": "Description is required, Title is required, ImageUrl is required"
+      }
+    },
+    "createWallpaperError": {
+      "example": {
+        "code": 400,
+        "message": "Description is required, Title is required, UrlTitle is required"
+      }
+    },
+    "createToneError": {
+      "example": {
+        "code": 400,
+        "message": "Audio is required, Title is required, UrlTitle is required"
+      }
+    },
+    "createGameSuccess": {
+      "example": {
+        "id": 1,
+        "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "imageUrl": "www.xyz.com",
+        "title": "Games",
+        "iframe": "http://xyz.com/index.html",
+        "thumbnail": "/assets/games/cricket.jpg"
+      }
+    },
+    "createWallpaperSuccess": {
+      "example": {
+        "id": 1,
+        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "imageURL":"/assets/wallpaper.png",
+        "title": "wallpapers",
+        "downloads": "5k",
+        "visited": "9k"
+      }
+    },
+    "createToneSuccess": {
+      "example": {
+        "id": 1,
+        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "audio":"https://xyz.com",
+        "Downloads": "5.5k",
+        "title": "Three Little Birds",
+        "urlTitle": "three-little-birds",
+        "visited": "10.5k"
+      }
+    },
+    "getGameByIdSuccess": {
+      "example": {
+        "id": 1,
+        "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "imageUrl": "www.xyz.com",
+        "title": "Games",
+        "iframe": "http://xyz.com/index.html",
+        "thumbnail": "/assets/games/cricket.jpg"
+      }
+    },
+    "getWallpaperByIdSuccess": {
+      "example": {
+        "id": 1,
+        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "imageURL":"/assets/wallpaper.png",
+        "title": "wallpapers",
+        "downloads": "5k",
+        "visited": "9k"
+      }
+    },
+    "getToneByIdSuccess": {
+      "example": {
+        "id": 1,
+        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "audio":"https://xyz.com",
+        "Downloads": "5.5k",
+        "title": "Three Little Birds",
+        "urlTitle": "three-little-birds",
+        "visited": "10.5k"
+      }
+    },
+    "getGameByIdNotFoundError": {
+      "example": {
+        "code": 404,
+        "message": "Game not found" 
+      }
+    },
+    "getWallpaperByIdNotFoundError": {
+      "example": {
+        "code": 404,
+        "message": "Wallpaper not found" 
+      }
+    },
+    "getToneByIdNotFoundError": {
+      "example": {
+        "code": 404,
+        "message": "Tone not found" 
+      }
+    },
+    "updateGameByIdSuccess": {
+      "example": {
+        "id": 1,
+        "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "imageUrl": "www.xyz.com",
+        "title": "Games",
+        "iframe": "http://xyz.com/index.html",
+        "thumbnail": "/assets/games/cricket.jpg"
+      }
+    },
+    "updateWallpaperByIdSuccess": {
+      "example": {
+        "id": 1,
+        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "imageURL":"/assets/wallpaper.png",
+        "title": "wallpapers",
+        "downloads": "5k",
+        "visited": "9k"
+      }
+    },
+    "updateToneByIdSuccess": {
+      "example": {
+        "id": 1,
+        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+        "audio":"https://xyz.com",
+        "Downloads": "5.5k",
+        "title": "Three Little Birds",
+        "urlTitle": "three-little-birds",
+        "visited": "10.5k"
+      }
+    },
+    "deleteGameByIdSuccess": {
+      "example": {
+        "message": "Game Deleted successfully"
+      }
+    },
+    "deleteWallpaperByIdSuccess": {
+      "example": {
+        "message": "Wallpaper Deleted successfully"
+      }
+    },
+    "deleteToneByIdSuccess": {
+      "example": {
+        "message": "Tone Deleted successfully"
+      }
+    }
+  }
+  }
