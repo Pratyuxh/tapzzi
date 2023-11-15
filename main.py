@@ -10,7 +10,7 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from pymongo import MongoClient
 from bson.json_util import dumps
 
-
+#MongoDB Integration
 app = Flask(__name__)
 mongo_db_url = os.environ.get("MONGO_DB_CONN_STRING")
 
