@@ -1,14 +1,13 @@
 import os
 from flask import Flask, jsonify, request, make_response, render_template, flash, redirect
-from pymongo import MongoClient
 from flask_swagger_ui import get_swaggerui_blueprint
 
 #MongoDB Integration
 app = Flask(__name__)
-mongo_db_url = os.environ.get("MONGO_DB_CONN_STRING")
+# mongo_db_url = os.environ.get("MONGO_DB_CONN_STRING")
 
-client = MongoClient(mongo_db_url)
-db = client['tapzzi'] 
+# client = MongoClient(mongo_db_url)
+# db = client['tapzzi'] 
 
 #Swagger Integration
 SWAGGER_URL = '/swagger'  # URL for exposing Swagger UI (without trailing '/')
