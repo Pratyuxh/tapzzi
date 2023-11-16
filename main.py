@@ -24,6 +24,7 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 
 app.register_blueprint(swaggerui_blueprint, url_prefix = SWAGGER_URL)
 
+# Games Schema
 games = [
     {
         'id': 1,
