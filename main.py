@@ -2,12 +2,7 @@ import os
 from flask import Flask, jsonify, request, make_response, render_template, flash, redirect
 from flask_swagger_ui import get_swaggerui_blueprint
 
-#MongoDB Integration
 app = Flask(__name__)
-# mongo_db_url = os.environ.get("MONGO_DB_CONN_STRING")
-
-# client = MongoClient(mongo_db_url)
-# db = client['tapzzi'] 
 
 #Swagger Integration
 SWAGGER_URL = '/swagger'  # URL for exposing Swagger UI (without trailing '/')
@@ -200,4 +195,3 @@ def delete_wallpaper(id):
 # Run the flask App
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-#   app.run(debug=True)
