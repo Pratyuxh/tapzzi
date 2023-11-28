@@ -10,10 +10,29 @@
     }
   },
   "servers": [
-      {
-        "url": "/",
-        "description": "Production server"
+    {
+      "url": "http://localhost:8080",
+      "description": "Local server"
+    },
+    {
+      "url": "https://tapzzi-api.superminds.dev",
+      "description": "Production server"
+    }
+    ],
+  "securityDefinitions": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "required": true,
+        "description": "Bearer token to access these api endpoints",
+        "scheme": "bearer"
       }
+  }, 
+  "security": [
+          {
+            "bearerAuth": []
+          }
     ],
   "tags": [
       {
@@ -37,13 +56,19 @@
           ],
           "summary": "Return Games",
           "description": "This endpoint will get all Games",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "produces": "['application/json']",
           "responses": {
             "200": {
               "description": "Games Data",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/games"
+                    "$ref": "#/schemas/games"
                   }
                 }
               }
@@ -87,7 +112,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/game"
+                  "$ref": "#/schemas/game"
                 }
               }
             }
@@ -155,6 +180,11 @@
           ],
           "summary": "Get Game with given ID",
           "description": "This endpoint will get Game by ID.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
           "parameters": [
             {
               "in": "path",
@@ -162,7 +192,7 @@
               "required": true,
               "description": "Game ID",
               "schema": {
-                "$ref": "#/components/schemas/id"
+                "$ref": "#/schemas/id"
               }
             }
           ],
@@ -212,6 +242,11 @@
         "put": {
           "summary": "Update a Game by ID",
           "description": "This endpoint will update a game by ID",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
           "tags": [
             "Games"
           ],
@@ -222,7 +257,7 @@
               "required": true,
               "description": "Update Game",
               "schema": {
-                "$ref": "#/components/schemas/id"
+                "$ref": "#/schemas/id"
               }
             }
           ],
@@ -232,7 +267,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/game"
+                  "$ref": "#/schemas/game"
                 }
               }
             }
@@ -286,6 +321,11 @@
         "delete": {
           "summary": "Delete Game by ID",
           "description": "This API Endpoint will delete Game by ID",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
           "tags": [
             "Games"
           ],
@@ -296,7 +336,7 @@
               "required": true,
               "description": "Delete game",
               "schema": {
-                "$ref": "#/components/schemas/id"
+                "$ref": "#/schemas/id"
               }
             }
           ],
@@ -351,13 +391,18 @@
             ],
             "summary": "Returns Wallpapers",
             "description": "This endpoint will get all wallpapers",
+            "security": [
+              {
+                "bearerAuth": []
+              }
+            ],
             "responses": {
               "200": {
                 "description": "Wallpapers Data",
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/components/schemas/wallpapers"
+                      "$ref": "#/schemas/wallpapers"
                     }
                   }
                 }
@@ -390,13 +435,18 @@
             ],
             "summary": "Create a new Wallpaper",
             "description": "This endpoint will create new wallpaper",
+            "security": [
+              {
+                "bearerAuth": []
+              }
+            ],
             "requestBody": {
               "description": "Wallpaper Request Object",
               "required": true,
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/wallpaper"
+                    "$ref": "#/schemas/wallpaper"
                   }
                 }
               }
@@ -464,6 +514,11 @@
             ],
             "summary": "Get Wallpaper with given ID",
             "description": "This endpoint will create Wallpaper with given id",
+            "security": [
+              {
+                "bearerAuth": []
+              }
+            ],
             "parameters": [
               {
                 "in": "path",
@@ -471,7 +526,7 @@
                 "required": true,
                 "description": "Wallpaper id",
                 "schema": {
-                  "$ref": "#/components/schemas/id"
+                  "$ref": "#/schemas/id"
                 }
               }
             ],
@@ -521,6 +576,11 @@
           "put": {
             "summary": "Update a Wallpaper by ID",
             "description": "This endpoint will update Wallpaper by ID",
+            "security": [
+              {
+                "bearerAuth": []
+              }
+            ],
             "tags": [
               "Wallpapers"
             ],
@@ -531,7 +591,7 @@
                 "required": true,
                 "description": "Wallpapers",
                 "schema": {
-                  "$ref": "#/components/schemas/id"
+                  "$ref": "#/schemas/id"
                 }
               }
             ],
@@ -541,7 +601,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/wallpaper"
+                    "$ref": "#/schemas/wallpaper"
                   }
                 }
               }
@@ -595,6 +655,11 @@
           "delete": {
             "summary": "Delete Wallpaper by ID",
             "description": "This endpoint will Delete Wallpaper by ID",
+            "security": [
+              {
+                "bearerAuth": []
+              }
+            ],
             "tags": [
               "Wallpapers"
             ],
@@ -605,7 +670,7 @@
                 "required": true,
                 "description": "Wallpaper",
                 "schema": {
-                  "$ref": "#/components/schemas/id"
+                  "$ref": "#/schemas/id"
                 }
               }
             ],
@@ -660,13 +725,18 @@
             ],
             "summary": "Return tones",
             "description": "This endpoint will get tones",
+            "security": [
+              {
+                "bearerAuth": []
+              }
+            ],
             "responses": {
               "200": {
                 "description": "Tones Data",
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/components/schemas/tones"
+                      "$ref": "#/schemas/tones"
                     }
                   }
                 }
@@ -705,7 +775,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/tones"
+                    "$ref": "#/schemas/tones"
                   }
                 }
               }
@@ -780,7 +850,7 @@
                 "required": true,
                 "description": "tone id",
                 "schema": {
-                  "$ref": "#/components/schemas/id"
+                  "$ref": "#/schemas/id"
                 }
               }
             ],
@@ -840,7 +910,7 @@
                 "required": true,
                 "description": "Update Tone",
                 "schema": {
-                  "$ref": "#/components/schemas/id"
+                  "$ref": "#/schemas/id"
                 }
               }
             ],
@@ -850,7 +920,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/tone"
+                    "$ref": "#/schemas/tone"
                   }
                 }
               }
@@ -914,7 +984,7 @@
                 "required": true,
                 "description": "Delete Tone",
                 "schema": {
-                  "$ref": "#/components/schemas/id"
+                  "$ref": "#/schemas/id"
                 }
               }
             ],
@@ -968,7 +1038,8 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
-      },
+      }
+    },
       "schemas": {
         "id": {
           "properties": {
@@ -1013,7 +1084,7 @@
                   "type": "string",
                   "format": "string"
                 },
-                "Downloads": {
+                "downloads": {
                   "type": "string",
                   "format": "string"
                 },
@@ -1062,7 +1133,7 @@
             "game": {
               "type": "object",
               "additionalProperties": {
-                "$ref": "#/components/schemas/game"
+                "$ref": "#/schemas/game"
             }
           }
        }
@@ -1073,7 +1144,7 @@
             "tone": {
               "type": "object",
               "additionalProperties": {
-                "$ref": "#/components/schemas/tone"
+                "$ref": "#/schemas/tone"
             }
           }
        }
@@ -1084,12 +1155,11 @@
             "contact": {
               "type": "object",
               "additionalProperties": {
-                "$ref": "#/components/schemas/wallpaper"
+                "$ref": "#/schemas/wallpaper"
             }
           }
        }
         }
-      }
     },
   "serverResponseExample": {
     "notFound": {
@@ -1130,10 +1200,10 @@
       "example": {
         "id": 1,
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "www.xyz.com",
-        "title": "Games",
-        "iframe": "http://xyz.com/index.html",
-        "thumbnail": "/assets/games/cricket.jpg"
+        "imageUrl": "/assets/games.png",
+        "title": "games",
+        "iframe": "https://d3ks8yzgy5vojs.cloudfront.net/en/air-traffic-control/index.html",
+        "thumbnail": "/assets/games/jabjabboxing.jpg"
       }
     },
     "createWallpaperSuccess": {
@@ -1142,7 +1212,7 @@
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
-        "downloads": "5k",
+        "downloads": "1.2k",
         "visited": "9k"
       }
     },
@@ -1150,21 +1220,21 @@
       "example": {
         "id": 1,
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"https://xyz.com",
-        "Downloads": "5.5k",
+        "audio":"http://into.grmobziigames.com/wp-content/uploads/2022/02/3_little_birds.mp3?_=1",
+        "Downloads": "1.2k",
         "title": "Three Little Birds",
         "urlTitle": "three-little-birds",
-        "visited": "10.5k"
+        "visited": "1.2k"
       }
     },
     "getGameByIdSuccess": {
       "example": {
         "id": 1,
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "www.xyz.com",
-        "title": "Games",
-        "iframe": "http://xyz.com/index.html",
-        "thumbnail": "/assets/games/cricket.jpg"
+        "imageUrl": "/assets/games.png",
+        "title": "games",
+        "iframe": "https://d3ks8yzgy5vojs.cloudfront.net/en/air-traffic-control/index.html",
+        "thumbnail": "/assets/games/jabjabboxing.jpg"
       }
     },
     "getWallpaperByIdSuccess": {
@@ -1173,7 +1243,7 @@
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
-        "downloads": "5k",
+        "downloads": "1.2k",
         "visited": "9k"
       }
     },
@@ -1181,11 +1251,11 @@
       "example": {
         "id": 1,
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"https://xyz.com",
-        "Downloads": "5.5k",
+        "audio":"http://into.grmobziigames.com/wp-content/uploads/2022/02/3_little_birds.mp3?_=1",
+        "Downloads": "1.2k",
         "title": "Three Little Birds",
         "urlTitle": "three-little-birds",
-        "visited": "10.5k"
+        "visited": "1.2k"
       }
     },
     "getGameByIdNotFoundError": {
@@ -1210,10 +1280,10 @@
       "example": {
         "id": 1,
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "www.xyz.com",
-        "title": "Games",
-        "iframe": "http://xyz.com/index.html",
-        "thumbnail": "/assets/games/cricket.jpg"
+        "imageUrl": "/assets/games.png",
+        "title": "games",
+        "iframe": "https://d3ks8yzgy5vojs.cloudfront.net/en/air-traffic-control/index.html",
+        "thumbnail": "/assets/games/jabjabboxing.jpg"
       }
     },
     "updateWallpaperByIdSuccess": {
@@ -1222,7 +1292,7 @@
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
-        "downloads": "5k",
+        "downloads": "1.2k",
         "visited": "9k"
       }
     },
@@ -1230,11 +1300,11 @@
       "example": {
         "id": 1,
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"https://xyz.com",
-        "Downloads": "5.5k",
+        "audio":"http://into.grmobziigames.com/wp-content/uploads/2022/02/3_little_birds.mp3?_=1",
+        "Downloads": "1.2k",
         "title": "Three Little Birds",
         "urlTitle": "three-little-birds",
-        "visited": "10.5k"
+        "visited": "1.2k"
       }
     },
     "deleteGameByIdSuccess": {
