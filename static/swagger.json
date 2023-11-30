@@ -35,6 +35,10 @@
           }
     ],
   "tags": [
+       {
+        "name": "Login",
+        "description": "API for Login. "
+      },
       {
         "name": "Games",
         "description": "API for Games. "
@@ -53,6 +57,66 @@
       }
     ],
     "paths": {
+      "/login": {
+        "post": {
+          "tags": [
+            "Login"
+          ],
+          "summary": "Create a new token",
+          "description": "This endpoint will create token",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "description": "Login Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/schemas/login"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Token Created",
+              "content": {
+                "application/json": {
+                "schema": {
+                "$ref": "#/serverResponseExample/createLoginSuccess"
+                  }
+                }
+              }
+            }, 
+            "400": {
+              "description": "Bad Request.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/createLoginError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "/games": {
         "get": {
           "tags": [
@@ -168,7 +232,7 @@
           }
         }
       },
-      "/games/{id}": {
+      "/game/{id}": {
         "parameters": [
           {
             "name": "id",
@@ -388,6 +452,131 @@
           }
         }
       },
+      "/games/image": {
+        "parameters": [
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "description": "Image that we want to upload"
+          }
+        ],
+        "post": {
+          "tags": [
+            "Games"
+          ],
+          "summary": "Upload an Image",
+          "description": "This endpoint will upload a new Image",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": { 
+                  "properties": {
+                    "filename": {
+                      "type": "string",
+                      "format": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Image Game Created",
+              "content": {
+                "application/json": {
+                "schema": {
+                "$ref": "#/serverResponseExample/createGameImageSuccess"
+                  }
+                }
+              }
+            }, 
+            "401": {
+              "description": "Unauthorized Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete Game Image",
+          "description": "This endpoint will Delete Game Image",
+          "securityDefinitions": {
+            "bearerAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "Authorization",
+              "description": "Bearer token to access these api endpoints",
+              "scheme": "bearer"
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "tags": [
+            "Games"
+          ],
+          
+          "responses": {
+            "200": {
+              "description": "Games Image Data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/deleteGameImageByIdSuccess"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "/wallpapers": {
           "get": {
             "tags": [
@@ -502,7 +691,7 @@
             }
           }
       },
-      "/wallpapers/{id}": {
+      "/wallpaper/{id}": {
           "parameters": [
             {
               "name": "id",
@@ -831,7 +1020,7 @@
             }
           }
       },
-      "/tones/{id}": {
+      "/tone/{id}": {
           "parameters": [
             {
               "name": "id",
@@ -1042,7 +1231,7 @@
             "Default"
           ],
           "summary": "Return All Data",
-          "description": "This endpoint will get all bookings",
+          "description": "This endpoint will get all data",
           "security": [
             {
               "bearerAuth": []
@@ -1074,6 +1263,19 @@
             "id": {
               "type": "string"
             }
+          }
+        },
+        "login": {
+          "type": "object",
+          "properties": {
+              "username": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "password": {
+                  "type": "string",
+                  "format": "number"
+                }
           }
         },
         "game": {
@@ -1206,6 +1408,12 @@
        "message": "Please authenticate"
       }
     },
+    "createLoginError": {
+      "example": {
+        "code": 400,
+        "message": "Username is required, Password is required"
+      }
+    },
     "createGameError": {
       "example": {
         "code": 400,
@@ -1222,6 +1430,11 @@
       "example": {
         "code": 400,
         "message": "Audio is required, Title is required, UrlTitle is required"
+      }
+    },
+    "createLoginSuccess": {
+      "example": {
+        "access_token" :"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwMTMyNDI0NSwianRpIjoiMGJkNWI2ZGQtYjc5Yy00ODBkLWE3NzAtMzMyYmVkMWFkMWU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InVzZXIxIiwibmJmIjoxNzAxMzI0MjQ1LCJleHAiOjE3MDEzMjUxNDV9.E1nzEIXCqMMmmE5eGbo6zdEOpVFV_bWeqFzzZ8Zg_48"
       }
     },
     "createGameSuccess": {
@@ -1253,6 +1466,11 @@
         "title": "Three Little Birds",
         "urlTitle": "three-little-birds",
         "visited": "10.5k"
+      }
+    },
+    "createGameImageSuccess": {
+      "example": {
+        "file_url": "https://tapzzi.blr1.digitaloceanspaces.com/tapzzi/filename"
       }
     },
     "getGameByIdSuccess": {
@@ -1343,6 +1561,11 @@
     "deleteWallpaperByIdSuccess": {
       "example": {
         "message": "Wallpaper Deleted successfully"
+      }
+    },
+    "deleteGameImageByIdSuccess": {
+      "example": {
+        "message": "Game Image Deleted successfully"
       }
     },
     "deleteToneByIdSuccess": {

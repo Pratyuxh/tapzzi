@@ -165,6 +165,48 @@ def delete_game(id):
     resp.status_code = 200
     return resp
 
+# DigitalOcean Spaces configurations
+DO_SPACES_ENDPOINT = 'https://tapzzi.blr1.digitaloceanspaces.com'  # Replace with your Space URL
+DO_ACCESS_KEY = 'DO00FVYZELDGLP9XU3Y4'  # Replace with your DigitalOcean Spaces access key
+DO_SECRET_KEY = '3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g'  # Replace with your DigitalOcean Spaces secret key
+DO_BUCKET_NAME = 'tapzzi'  # Replace with your DigitalOcean Spaces bucket name
+
+# Create a connection to DigitalOcean Spaces
+s3 = boto3.client('s3', endpoint_url=DO_SPACES_ENDPOINT, aws_access_key_id=DO_ACCESS_KEY, aws_secret_access_key=DO_SECRET_KEY)
+
+# Create a game image
+@app.route('/games/image', methods=['POST'])
+@jwt_required()
+def upload_image():
+    try:
+        # Get the file from the request
+        file = request.files['file']
+
+        # Upload the file to DigitalOcean Spaces
+        s3.upload_fileobj(file, DO_BUCKET_NAME, file.filename)
+
+        # Get the public URL of the uploaded file
+        file_url = f"{DO_SPACES_ENDPOINT}/{DO_BUCKET_NAME}/{file.filename}"
+
+        return jsonify({'message': 'Image uploaded successfully', 'file_url': file_url})
+    except NoCredentialsError:
+        return jsonify({'error': 'Credentials not available. Check your DigitalOcean Spaces access key and secret key.'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Delete a game image
+@app.route('/games/image/<string:filename>', methods=['DELETE'])
+@jwt_required()
+def delete(filename):
+        try:
+            # Delete the file from DigitalOcean Spaces
+            s3.delete_object(Bucket= DO_BUCKET_NAME, Key=filename)
+
+            return {'message': f'File {filename} deleted successfully'}
+
+        except NoCredentialsError:
+            return {'error': 'Credentials not available'}
+
 # Get all tones
 @app.route('/tones', methods=['GET'])
 @jwt_required()
