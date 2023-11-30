@@ -12,7 +12,6 @@ from flask import Flask, jsonify, request, make_response, render_template, flash
 from bson.objectid import ObjectId
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
-from flasgger import Swagger
 from botocore.exceptions import NoCredentialsError
 
 app = Flask(__name__)
