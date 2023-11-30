@@ -8,6 +8,7 @@ RUN pip install flask_cors
 RUN pip install flask_jwt_extended
 RUN pip install flask_pymongo
 RUN pip install certifi
+RUN pip install requests
 
 WORKDIR /app
 

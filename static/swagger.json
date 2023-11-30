@@ -46,6 +46,10 @@
       {
         "name": "Tones",
         "description": "API for Tones. "
+      },
+      {
+        "name": "Default",
+        "description": "API to get All Data. "
       }
     ],
     "paths": {
@@ -1031,6 +1035,30 @@
               }
             }
           }
+      },
+      "/getAllData":{
+        "get": {
+          "tags": [
+            "Default"
+          ],
+          "summary": "Return All Data",
+          "description": "This endpoint will get all bookings",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "produces": "['application/json']",
+          "responses": {
+            "200": {
+              "description": "All Data",
+              "content": {
+                "application/json": {
+                }
+              }
+            }
+          }
+        }
       }
     },
   "components": {
@@ -1200,10 +1228,10 @@
       "example": {
         "id": 1,
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "/assets/games.png",
-        "title": "games",
-        "iframe": "https://d3ks8yzgy5vojs.cloudfront.net/en/air-traffic-control/index.html",
-        "thumbnail": "/assets/games/jabjabboxing.jpg"
+        "imageUrl": "www.xyz.com",
+        "title": "Games",
+        "iframe": "http://xyz.com/index.html",
+        "thumbnail": "/assets/games/cricket.jpg"
       }
     },
     "createWallpaperSuccess": {
@@ -1212,7 +1240,7 @@
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
-        "downloads": "1.2k",
+        "downloads": "5k",
         "visited": "9k"
       }
     },
@@ -1220,21 +1248,21 @@
       "example": {
         "id": 1,
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"http://into.grmobziigames.com/wp-content/uploads/2022/02/3_little_birds.mp3?_=1",
-        "Downloads": "1.2k",
+        "audio":"https://xyz.com",
+        "Downloads": "5.5k",
         "title": "Three Little Birds",
         "urlTitle": "three-little-birds",
-        "visited": "1.2k"
+        "visited": "10.5k"
       }
     },
     "getGameByIdSuccess": {
       "example": {
         "id": 1,
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "/assets/games.png",
-        "title": "games",
-        "iframe": "https://d3ks8yzgy5vojs.cloudfront.net/en/air-traffic-control/index.html",
-        "thumbnail": "/assets/games/jabjabboxing.jpg"
+        "imageUrl": "www.xyz.com",
+        "title": "Games",
+        "iframe": "http://xyz.com/index.html",
+        "thumbnail": "/assets/games/cricket.jpg"
       }
     },
     "getWallpaperByIdSuccess": {
@@ -1243,7 +1271,7 @@
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
-        "downloads": "1.2k",
+        "downloads": "5k",
         "visited": "9k"
       }
     },
@@ -1251,11 +1279,11 @@
       "example": {
         "id": 1,
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"http://into.grmobziigames.com/wp-content/uploads/2022/02/3_little_birds.mp3?_=1",
-        "Downloads": "1.2k",
+        "audio":"https://xyz.com",
+        "Downloads": "5.5k",
         "title": "Three Little Birds",
         "urlTitle": "three-little-birds",
-        "visited": "1.2k"
+        "visited": "10.5k"
       }
     },
     "getGameByIdNotFoundError": {
@@ -1280,10 +1308,10 @@
       "example": {
         "id": 1,
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "/assets/games.png",
-        "title": "games",
-        "iframe": "https://d3ks8yzgy5vojs.cloudfront.net/en/air-traffic-control/index.html",
-        "thumbnail": "/assets/games/jabjabboxing.jpg"
+        "imageUrl": "www.xyz.com",
+        "title": "Games",
+        "iframe": "http://xyz.com/index.html",
+        "thumbnail": "/assets/games/cricket.jpg"
       }
     },
     "updateWallpaperByIdSuccess": {
@@ -1292,7 +1320,7 @@
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
-        "downloads": "1.2k",
+        "downloads": "5k",
         "visited": "9k"
       }
     },
@@ -1300,11 +1328,11 @@
       "example": {
         "id": 1,
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"http://into.grmobziigames.com/wp-content/uploads/2022/02/3_little_birds.mp3?_=1",
-        "Downloads": "1.2k",
+        "audio":"https://xyz.com",
+        "Downloads": "5.5k",
         "title": "Three Little Birds",
         "urlTitle": "three-little-birds",
-        "visited": "1.2k"
+        "visited": "10.5k"
       }
     },
     "deleteGameByIdSuccess": {

@@ -1,19 +1,19 @@
-from crypt import methods
 import os
+import requests
 import certifi
-from flask import Flask, jsonify, request, make_response, render_template, flash, redirect
+import boto3
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from bson.json_util import dumps
+from flask import Flask, jsonify, request, make_response, render_template, flash, redirect, g, after_this_request
 from bson.objectid import ObjectId
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
-import boto3
+from flasgger import Swagger
 from botocore.exceptions import NoCredentialsError
-
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -108,6 +108,7 @@ def add_user():
 
 # Get all games
 @app.route('/games', methods=['GET'])
+@jwt_required()
 def get_games():
     games = mongo.db.game.find()
     resp = dumps(games)
@@ -115,6 +116,7 @@ def get_games():
 
 # Get a specific game by ID
 @app.route('/game/<id>')
+@jwt_required()
 def game(id):
     game = mongo.db.game.find_one({'_id':ObjectId(id)})
     resp = dumps(game)
@@ -122,6 +124,7 @@ def game(id):
 
 # Create a game
 @app.route('/games', methods=['POST'])
+@jwt_required()
 def create_game():
     _json = request.json
     _description = _json['description']
@@ -138,6 +141,7 @@ def create_game():
 
 # Update a game
 @app.route('/game/<id>', methods=['PUT'])
+@jwt_required()
 def update_game(id):
     _json = request.json
     _id = _json['id']
@@ -155,6 +159,7 @@ def update_game(id):
 
 # Delete a game
 @app.route('/game/<id>', methods=['DELETE'])
+@jwt_required()
 def delete_game(id):
     mongo.db.game.delete_one({'_id':ObjectId(id)})
     resp = jsonify("Game Deleted Successfully")
@@ -163,6 +168,7 @@ def delete_game(id):
 
 # Get all tones
 @app.route('/tones', methods=['GET'])
+@jwt_required()
 def get_tones():
     tones = mongo.db.tones.find()
     resp = dumps(tones)
@@ -170,6 +176,7 @@ def get_tones():
 
 # Get a specific tone by ID
 @app.route('/tone/<id>')
+@jwt_required()
 def tone(id):
     tone = mongo.db.tones.find_one({'_id':ObjectId(id)})
     resp = dumps(tone)
@@ -177,6 +184,7 @@ def tone(id):
 
 # Create a tone
 @app.route('/tones', methods=['POST'])
+@jwt_required()
 def create_tone():
     _json = request.json
     _audio = _json['audio']
@@ -194,6 +202,7 @@ def create_tone():
 
 # Update a tone
 @app.route('/tone/<id>', methods=['PUT'])
+@jwt_required()
 def update_tone(id):
     _json = request.json
     _id = id
@@ -212,6 +221,7 @@ def update_tone(id):
 
 # Delete a tone
 @app.route('/tone/<id>', methods=['DELETE'])
+@jwt_required()
 def delete_tone(id):
     mongo.db.tones.delete_one({'_id':ObjectId(id)})
     resp = jsonify("Tone Deleted Successfully")
@@ -220,6 +230,7 @@ def delete_tone(id):
 
 # Get all wallpapers
 @app.route('/wallpapers', methods=['GET'])
+@jwt_required()
 def get_wallpapers():
     wallpapers = mongo.db.wallpapers.find()
     resp = dumps(wallpapers)
@@ -227,6 +238,7 @@ def get_wallpapers():
 
 # Get a specific wallpaper by ID
 @app.route('/wallpaper/<id>')
+@jwt_required()
 def wallpaper(id):
     wallpaper = mongo.db.wallpapers.find_one({'_id':ObjectId(id)})
     resp = dumps(wallpaper)
@@ -234,6 +246,7 @@ def wallpaper(id):
 
 # Create a wallpaper
 @app.route('/wallpapers', methods=['POST'])
+@jwt_required()
 def create_wallpaper():
     _json = request.json
     _downloads = _json['downloads']
@@ -250,6 +263,7 @@ def create_wallpaper():
 
 # Update a wallpaper
 @app.route('/wallpaper/<id>', methods=['PUT'])
+@jwt_required()
 def update_wallpaper(id):
     _json = request.json
     _id = id
@@ -267,11 +281,33 @@ def update_wallpaper(id):
 
 # Delete a wallpaper
 @app.route('/wallpaper/<id>', methods=['DELETE'])
+@jwt_required()
 def delete_wallpaper(id):
     mongo.db.wallpapers.delete_one({'_id':ObjectId(id)})
     resp = jsonify("Wallpaper Deleted Successfully")
     resp.status_code = 200
     return resp
+
+apis = [
+    "http://localhost:8080/games",
+    "http://localhost:8080/tones",
+    "http://localhost:8080/wallpapers"
+    # Add more endpoints as needed
+]
+
+@app.route('/getAllData', methods=['GET'])
+def get_aggregated_data():
+    aggregated_data = []
+
+    for api in apis:
+        try:
+            response = requests.get(api)
+            data = response.json()
+            aggregated_data.append(data)
+        except Exception as e:
+            aggregated_data.append({"error": str(e)})
+
+    return jsonify(aggregated_data)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
