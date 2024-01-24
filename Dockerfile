@@ -9,6 +9,9 @@ RUN pip install flask_jwt_extended
 RUN pip install flask_pymongo
 RUN pip install certifi
 RUN pip install requests
+RUN pip install Flask-BasicAuth
+RUN pip install Flask-Bcrypt
+RUN pip install Flask-RESTful
 
 WORKDIR /app
 

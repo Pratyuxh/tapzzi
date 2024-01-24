@@ -1,31 +1,45 @@
 import os
-import requests
-import certifi
+# import certifi
 import boto3
 from flask_pymongo import PyMongo
+from flask_restful import Resource, Api
 from pymongo import MongoClient
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask import Flask, Response, jsonify, request, make_response, render_template, flash, redirect, g, after_this_request
 from bson.json_util import dumps
-from flask import Flask, jsonify, request, make_response, render_template, flash, redirect, g, after_this_request
 from bson.objectid import ObjectId
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 from botocore.exceptions import NoCredentialsError
+from bson import ObjectId, json_util
+from flask_basicauth import BasicAuth
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+jwt = JWTManager(app)
 cors = CORS(app)
+bcrypt = Bcrypt(app)
+auth = HTTPBasicAuth()
 app.config["CORS_HEADERS"] = "Content-Type"
-mongo_db_url = os.environ.get("MONGO_DB_CONN_STRING")
-client = MongoClient(mongo_db_url)
-db = client['tapzzi'] 
 
-connection_string = f"mongodb+srv://pratyush:76m3t4IY0kqh19p8@superminds-cluster-public-f49e7a24.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=superminds-cluster-public&tls=true"
-client = MongoClient(connection_string, tlsCAFile=certifi.where())
-
-app.config['MONGO_URI'] = "mongodb+srv://pratyush:76m3t4IY0kqh19p8@superminds-cluster-public-f49e7a24.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=superminds-cluster-public&tls=true"
+# mongodb+srv://pratyush:<replace-with-your-password>@superminds-cluster-7f2d92d1.mongo.ondigitalocean.com/tapzzi?tls=true&authSource=admin&replicaSet=superminds-cluster
+connection_string = f"mongodb+srv://pratyush:43O86u20v1HPDL9h@superminds-cluster-7f2d92d1.mongo.ondigitalocean.com/tapzzi?tls=true&authSource=admin&replicaSet=superminds-cluster" 
+client = MongoClient(connection_string) #tlsCAFile=certifi.where()
+app.config['MONGO_URI'] = "mongodb+srv://pratyush:43O86u20v1HPDL9h@superminds-cluster-7f2d92d1.mongo.ondigitalocean.com/tapzzi?tls=true&authSource=admin&replicaSet=superminds-cluster"
 mongo = PyMongo(app)
+
+db = client['tapzzi'] 
+collection = db['users']
+collection1 = db['games']
+collection2 = db['tones']
+collection3 = db['wallpapers']
+files_collection = db['files']
+
+auth = HTTPBasicAuth()
+basic_auth = BasicAuth(app)
+api = Api(app)
 
 SWAGGER_URL = '/swagger'  # URL for exposing Swagger UI (without trailing '/')
 API_URL = '/static/swagger.json'  # Our API url (can of course be a local resource)
@@ -33,12 +47,26 @@ API_URL = '/static/swagger.json'  # Our API url (can of course be a local resour
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
     API_URL,
-    config={  # Swagger UI config overrides
-        'app_name': "Tapzzi"
+    config={ 
+        'app_name': "Tapzzi",
+        'uiversion': 3,
+        'supportedSubmitMethods': ['get', 'post', 'put', 'delete'],
+        'securityDefinitions': {
+            'basicAuth': {
+                'type': 'basic',
+                'description': 'Basic HTTP Authentication',
+            },
+        },
+        'security': [{'basicAuth': []}],
     },
 )
 
 app.register_blueprint(swaggerui_blueprint, url_prefix = SWAGGER_URL)
+
+@app.route('/static/swagger.json')
+@auth.login_required
+def send_swagger_json():
+    return app.send_static_file('swagger.json')
 
 # Configure JWT
 app.config['JWT_SECRET_KEY'] = '854d9f0a3a754b16a6e1f3655b3cfbb5'
@@ -49,285 +77,556 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 
 headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwMDQ3MTg0NCwianRpIjoiNjg1MDdkZDAtOGZiYS00NTM1LTk0M2UtODE3MDcwODMyODM2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InVzZXIxIiwibmJmIjoxNzAwNDcxODQ0LCJleHAiOjE3MDA0NzI3NDR9.LwwPvBpOwU6xi6pGAEMUo7KkzFfAZ4S_VYPLrS90k_k'}
-
-# Mock user data for demonstration
-users = {
-    'user1': {'password': 'password1'},
-    "admin": generate_password_hash("admin"),
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwMDQ3MTg0NCwianRpIjoiNjg1MDdkZDAtOGZiYS00NTM1LTk0M2UtODE3MDcwODMyODM2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InVzZXIxIiwibmJmIjoxNzAwNDcxODQ0LCJleHAiOjE3MDA0NzI3NDR9.LwwPvBpOwU6xi6pGAEMUo7KkzFfAZ4S_VYPLrS90k_k'
 }
 
-# Token creation route (login)
-@app.route('/login', methods=['GET','POST'])
-def login():
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
+@app.route('/register', methods=['POST'])
+def register_user():
+    data = request.get_json()
 
-    if username in users and users[username]['password'] == password:
-        access_token = create_access_token(identity=username)
-        return jsonify(access_token=access_token), 200
-    else:
-        return jsonify({'message': 'Invalid credentials'}), 401
+    if 'username' not in data or 'password' not in data:
+        return jsonify({'error': 'Username and password are required'}), 400
 
-# Protected route (CRUD operations)
-@app.route('/protected', methods=['GET', 'POST'])
-@jwt_required()
-def protected():
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    username = data['username']
+    password = data['password']
 
-# Configure BasicAuth
-auth = HTTPBasicAuth()
+    existing_user = mongo.db.users.find_one({'username': username})
+    if existing_user:
+        return jsonify({'error': 'Username already exists'}), 409
+
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    mongo.db.users.insert_one({
+        'username': username,
+        'password': hashed_password
+    })
+
+    return jsonify({'message': 'User registered successfully'}), 201
 
 @auth.verify_password
 def verify_password(username, password):
-    if username in users and \
-            check_password_hash(users.get(username), password):
+    print(f"Received username: {username}, password: {password}")
+    user = mongo.db.users.find_one({'username': username})
+    if user and bcrypt.check_password_hash(user['password'], password):
         return username
+    if user:
+        stored_password = user.get('password')
+        print(f"Stored password: {stored_password}")
+        if bcrypt.check_password_hash(stored_password, password):
+            print("Authentication successful")
+            return username
+
+    print("Authentication failed")
+    return False
 
 @app.route('/')
 @auth.login_required
 def index():
     return "Hello, {}!".format(auth.current_user())
 
-# Create a User
-@app.route('/user', methods=['POST'])
-def add_user():
-    _json = request.json
-    _name = _json['name']
-    _email = _json['email']
-    _pwd = _json['pwd']
+# Token creation route (login)
+@app.route('/login', methods=['GET','POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username', None)
+    password = data.get('password', None)
 
-    if _name and _email and _pwd and request.method == 'POST':
-        _hashed_password = generate_password_hash(_pwd) 
-        id = mongo.db.user.insert_one({'name': _name, 'email': _email, 'pwd': _hashed_password})
-        return {"data":"User added successfully"}
+    user = mongo.db.users.find_one({'username': username})
+
+    if user and user['password'] == password:
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token), 200
     else:
-        return {'error':'Not found'}
+        return jsonify({'message': 'Invalid credentials'}), 401
 
-# Get all games
-@app.route('/games', methods=['GET'])
-@jwt_required()
-def get_games():
-    games = mongo.db.game.find()
-    resp = dumps(games)
-    return resp
-
-# Get a specific game by ID
-@app.route('/game/<id>')
-@jwt_required()
-def game(id):
-    game = mongo.db.game.find_one({'_id':ObjectId(id)})
-    resp = dumps(game)
-    return resp
+validation_rules = {
+    "description": "required",
+    "imageUrl": "required",
+    "title": "required",
+    "iframe": "optional",
+    "thumbnail": "required",
+    }
 
 # Create a game
 @app.route('/games', methods=['POST'])
-@jwt_required()
 def create_game():
-    _json = request.json
-    _description = _json['description']
-    _imageUrl = _json['imageUrl']
-    _title = _json['title']
-    _iframe = _json['iframe']
-    _thumbnail = _json['thumbnail']
+    data = request.get_json()
+    # Perform your validations
+    validation_errors = validate_data(data, validation_rules)
 
-    if _description and _imageUrl and _title and _iframe and _thumbnail and request.method == 'POST':
-        id = mongo.db.game.insert_one({'description': _description, 'imageUrl': _imageUrl, 'title': _title, 'iframe': _iframe, 'thumbnail': _thumbnail })
-        return {"data":"Game Added Successfully"}
-    else:
-        return {'error':'Game Not Found'}
+    if validation_errors:
+        # If there are validation errors, send a response with the errors
+        return jsonify({"errors": validation_errors}), 400
+
+    inserted_id = collection1.insert_one(data).inserted_id
+
+    # If validation passes, create a response with the desired data
+    response_data = {
+        "description": data.get("description"),
+        "imageUrl": data.get("imageUrl"),
+        "title": data.get("title"),
+        "iframe": data.get("iframe"),
+        "thumbnail": data.get("thumbnail"),
+        "_id": str(inserted_id)
+        # Add more fields as needed
+    }
+
+    return jsonify(response_data)
+
+def validate_data(data, validation_rules):
+    errors = []
+
+    for field, rule in validation_rules.items():
+        if rule == "required" and not data.get(field):
+            errors.append(f"{field} is required.")
+        elif rule == "optional" and field in data and not data.get(field):
+            errors.append(f"{field} must be optional.")
+
+    return errors
 
 # Update a game
 @app.route('/game/<id>', methods=['PUT'])
 @jwt_required()
 def update_game(id):
-    _json = request.json
-    _id = _json['id']
-    _description = _json['description']
-    _imageUrl = _json['imageUrl']
-    _title = _json['title']
-    _iframe = _json['iframe']
-    _thumbnail = _json['thumbnail']
+    id = ObjectId(id)
+    data = request.get_json()
+    validation_errors = validate_data(data, validation_rules)
 
-    if _description and _imageUrl and _title and _iframe and _thumbnail and request.method == 'PUT':
-        mongo.db.game.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)}, {'$set': {'id': _id, 'description': _description, 'imageUrl': _imageUrl, 'title': _title, 'iframe': _iframe, 'thumbnail': _thumbnail}})
-        resp = jsonify("Game Updated Successfully")
-        resp.status_code = 200
-        return resp
+    if validation_errors:
+        return jsonify({"errors": validation_errors}), 400
+    
+    existing_document = collection1.find_one({"_id": id})
+
+    if existing_document is None:
+        return jsonify({"error": "Game not found"}), 404
+
+    result = collection1.update_one({"_id": ObjectId(id)}, {"$set": data})
+
+    response_data = {
+        "description": data.get("description"),
+        "imageUrl": data.get("imageUrl"),
+        "title": data.get("title"),
+        "iframe": data.get("iframe"),
+        "thumbnail": data.get("thumbnail"),
+        "_id": str(id)
+        # Add more fields as needed
+    }
+
+    if result.matched_count == 0:
+        return jsonify({"error": "Game not found"}), 404
+    elif result.modified_count == 0:
+        return jsonify({"error": "Game not updated"}), 404
+    else:
+        return jsonify(response_data)
+
+# Get all games
+@app.route('/games', methods=['GET'])
+@jwt_required()
+def get_games():
+    games = list(collection1.find())
+    data = []
+    for game in games:
+        game['_id'] = str(game['_id'])
+        data.append(game)
+    return jsonify(data)
+
+# Get a specific game by ID
+@app.route('/game/<id>')
+@jwt_required()
+def game(id):
+    game = collection1.find_one({'_id':ObjectId(id)})
+    if game:
+        game["_id"] = str(game["_id"])
+        return game
+    else:
+        return jsonify({"error": "Game Not Found"}), 404
 
 # Delete a game
 @app.route('/game/<id>', methods=['DELETE'])
 @jwt_required()
 def delete_game(id):
-    mongo.db.game.delete_one({'_id':ObjectId(id)})
-    resp = jsonify("Game Deleted Successfully")
-    resp.status_code = 200
-    return resp
+    id = ObjectId(id)
+    result = collection1.delete_one({"_id": ObjectId(id)})
+    if result.deleted_count > 0:
+        return jsonify({"message": "Game deleted successfully"})
+    else:
+        return jsonify({"error": "Game not found or not deleted"}), 404
 
-# DigitalOcean Spaces configurations
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_FILE_SIZE_BYTES = 500 * 500 #10 * 1024 * 1024
 DO_SPACES_ENDPOINT = 'https://tapzzi.blr1.digitaloceanspaces.com'  # Replace with your Space URL
 DO_ACCESS_KEY = 'DO00FVYZELDGLP9XU3Y4'  # Replace with your DigitalOcean Spaces access key
 DO_SECRET_KEY = '3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g'  # Replace with your DigitalOcean Spaces secret key
 DO_BUCKET_NAME = 'tapzzi'  # Replace with your DigitalOcean Spaces bucket name
 
 # Create a connection to DigitalOcean Spaces
-s3 = boto3.client('s3', endpoint_url=DO_SPACES_ENDPOINT, aws_access_key_id=DO_ACCESS_KEY, aws_secret_access_key=DO_SECRET_KEY)
+# s3 = boto3.client('s3', endpoint_url=DO_SPACES_ENDPOINT, aws_access_key_id=DO_ACCESS_KEY, aws_secret_access_key=DO_SECRET_KEY)
 
-# Create a game image
-@app.route('/games/image', methods=['POST'])
-@jwt_required()
-def upload_image():
+def allowed_file_size(file):
+    return file.content_length <= MAX_FILE_SIZE_BYTES
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def upload_to_digitalocean(file, file_name, device_type, game_id):
     try:
-        # Get the file from the request
-        file = request.files['file']
+        s3 = boto3.client('s3',
+            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
+            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
+            endpoint_url=DO_SPACES_ENDPOINT
+        )
+
+        # Create a folder with the specified device type
+        folder_path = f"{device_type}/"
+        file_path = os.path.join(folder_path, file_name)
 
         # Upload the file to DigitalOcean Spaces
-        s3.upload_fileobj(file, DO_BUCKET_NAME, file.filename)
+        s3.upload_fileobj(file, DO_BUCKET_NAME, file_path)
 
         # Get the public URL of the uploaded file
-        file_url = f"{DO_SPACES_ENDPOINT}/{DO_BUCKET_NAME}/{file.filename}"
+        file_url = f"{DO_SPACES_ENDPOINT}/{DO_BUCKET_NAME}/{file_path}"
 
-        return jsonify({'message': 'Image uploaded successfully', 'file_url': file_url})
+        file_info = {
+            'filename': file_name,
+            'device_type': device_type,
+            'url': file_url,
+            'game_id': game_id  # Assuming you have an 'id' variable available in your code
+        }
+        files_collection.insert_one(file_info)
+
+        return file_url
+
     except NoCredentialsError:
-        return jsonify({'error': 'Credentials not available. Check your DigitalOcean Spaces access key and secret key.'}), 500
+        raise Exception('Credentials not available. Check your DigitalOcean Spaces access key and secret key.')
+    except Exception as e:
+        raise Exception(str(e))
+
+# Create a game image
+@app.route('/games/<id>/image', methods=['POST', 'DELETE'])
+@jwt_required()
+def upload_and_delete_image(id):
+    try:
+        file_name = None
+
+        s3 = boto3.client('s3',
+            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
+            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
+            endpoint_url=DO_SPACES_ENDPOINT
+        )
+
+        if request.method == 'POST':
+            # Check if the POST request has the file part
+            if 'file' not in request.files or 'device_type' not in request.form:
+                return jsonify({"error": "No file or device type provided"}), 400
+
+            file = request.files['file']
+            device_type = request.form['device_type']
+
+            # If the user does not select a file, the browser submits an empty file without a filename
+            if file.filename == '':
+                return jsonify({"error": "No selected file"}), 400
+
+            file_name = f"{file.filename}"
+
+            # Upload the file to DigitalOcean Spaces and get the file URL
+            file_url = upload_to_digitalocean(file, file_name, device_type, id)
+
+            return jsonify({'message': 'Image uploaded successfully', 'file_url': file_url})
+
+        elif request.method == 'DELETE':
+
+            file_name = request.json.get('filename') or request.args.get('filename')
+
+            if file_name is None:
+                return jsonify({"error": "No file specified for deletion"}), 400
+
+            # Delete the file from DigitalOcean Spaces
+            s3 = boto3.client('s3',
+            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
+            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
+            endpoint_url=DO_SPACES_ENDPOINT
+        )
+            # filename = request.json.get('filename')  # Assuming you send the filename in the request body
+
+            delete_file_from_digitalocean(file_name)
+
+            s3.delete_object(Bucket= DO_BUCKET_NAME, Key=file_name)
+
+            files_collection.delete_one({'filename': file_name})
+
+            return {'message': f'{file_name} deleted successfully'}
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+def delete_file_from_digitalocean(file_name):
+    try:
+        s3 = boto3.client('s3',
+            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
+            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
+            endpoint_url=DO_SPACES_ENDPOINT
+        )
+
+        # Delete the file from DigitalOcean Spaces
+        s3.delete_object(Bucket=DO_BUCKET_NAME, Key=file_name)
+
+    except NoCredentialsError:
+        raise Exception('Credentials not available. Check your DigitalOcean Spaces access key and secret key.')
+    except Exception as e:
+        raise Exception(str(e))
+
+def delete_file_from_mongodb(file_name):
+    # Delete the file information from MongoDB
+    files_collection.delete_one({'filename': file_name})
+
 # Delete a game image
-@app.route('/games/image/<string:filename>', methods=['DELETE'])
+@app.route('/games/<id>/image/<filename>', methods=['DELETE'])
 @jwt_required()
-def delete(filename):
-        try:
-            # Delete the file from DigitalOcean Spaces
-            s3.delete_object(Bucket= DO_BUCKET_NAME, Key=filename)
+def delete_uploaded_image(id, filename):
+    try:
+        # Delete the file from DigitalOcean Spaces
+        delete_file_from_digitalocean(filename)
 
-            return {'message': f'File {filename} deleted successfully'}
+        # Delete the file information from MongoDB
+        delete_file_from_mongodb(filename)
 
-        except NoCredentialsError:
-            return {'error': 'Credentials not available'}
+        return {'message': f'File {filename} deleted successfully'}
 
-# Get all tones
-@app.route('/tones', methods=['GET'])
-@jwt_required()
-def get_tones():
-    tones = mongo.db.tones.find()
-    resp = dumps(tones)
-    return resp
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-# Get a specific tone by ID
-@app.route('/tone/<id>')
-@jwt_required()
-def tone(id):
-    tone = mongo.db.tones.find_one({'_id':ObjectId(id)})
-    resp = dumps(tone)
-    return resp
+validation_rules2 = {
+    "description": "required",
+    "audio": "required",
+    "downloads": "required",
+    "title": "required",
+    "urlTitle": "required",
+    "visited": "required",
+    }
 
 # Create a tone
 @app.route('/tones', methods=['POST'])
-@jwt_required()
 def create_tone():
-    _json = request.json
-    _audio = _json['audio']
-    _downloads = _json['downloads']
-    _description = _json['description']
-    _title = _json['title']
-    _urlTitle = _json['urlTitle']
-    _visited = _json['visited']
+    data = request.get_json()
+    # Perform your validations
+    validation_errors = validate_data(data, validation_rules2)
 
-    if _audio and _downloads and _description and _title and _urlTitle and _visited and request.method == 'POST':
-        id = mongo.db.tones.insert_one({'audio': _audio, 'downloads': _downloads, 'description': _description, 'title': _title, 'urlTitle': _urlTitle, 'visited': _visited})
-        return {"data":"Tone Added Successfully"}
-    else:
-        return {'error':'Tone Not Found'}
+    if validation_errors:
+        # If there are validation errors, send a response with the errors
+        return jsonify({"errors": validation_errors}), 400
+
+    inserted_id = collection2.insert_one(data).inserted_id
+
+    # If validation passes, create a response with the desired data
+    response_data = {
+        "description": data.get("description"),
+        "audio": data.get("audio"),
+        "downloads": data.get("downloads"),
+        "title": data.get("title"),
+        "urlTitle": data.get("urlTitle"),
+        "visited": data.get("visited"),
+        "_id": str(inserted_id)
+        # Add more fields as needed
+    }
+
+    return jsonify(response_data)
+
+def validate_data(data, validation_rules2):
+    errors = []
+
+    for field, rule in validation_rules2.items():
+        if rule == "required" and not data.get(field):
+            errors.append(f"{field} is required.")
+        elif rule == "optional" and field in data and not data.get(field):
+            errors.append(f"{field} must be optional.")
+
+    return errors
 
 # Update a tone
 @app.route('/tone/<id>', methods=['PUT'])
 @jwt_required()
 def update_tone(id):
-    _json = request.json
-    _id = id
-    _audio = _json['audio']
-    _downloads = _json['downloads']
-    _description = _json['description']
-    _title = _json['title']
-    _urlTitle = _json['urlTitle']
-    _visited = _json['visited']
+    id = ObjectId(id)
+    data = request.get_json()
+    validation_errors = validate_data(data, validation_rules2)
 
-    if _audio and _downloads and _description and _title and _urlTitle and _visited and request.method == 'PUT':
-        mongo.db.tones.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)}, {'$set': {'audio': _audio, 'downloads': _downloads, 'description': _description, 'title': _title, 'urlTitle': _urlTitle, 'visited': _visited }})
-        resp = jsonify("Tone Updated Successfully")
-        resp.status_code = 200
-        return resp
+    if validation_errors:
+        return jsonify({"errors": validation_errors}), 400
+    
+    existing_document = collection2.find_one({"_id": id})
+
+    if existing_document is None:
+        return jsonify({"error": "Tone not found"}), 404
+
+    result = collection2.update_one({"_id": ObjectId(id)}, {"$set": data})
+
+    response_data = {
+        "description": data.get("description"),
+        "audio": data.get("audio"),
+        "downloads": data.get("downloads"),
+        "title": data.get("title"),
+        "urlTitle": data.get("urlTitle"),
+        "visited": data.get("visited"),
+        "_id": str(id)
+        # Add more fields as needed
+    }
+
+    if result.matched_count == 0:
+        return jsonify({"error": "Tone not found"}), 404
+    elif result.modified_count == 0:
+        return jsonify({"error": "Tone not updated"}), 404
+    else:
+        return jsonify(response_data)
+
+
+# Get all tones
+@app.route('/tones', methods=['GET'])
+@jwt_required()
+def get_tones():
+    tones = list(collection2.find())
+    data = []
+    for tone in tones:
+        tone['_id'] = str(tone['_id'])
+        data.append(tone)
+    return jsonify(data)
+
+# Get a specific tone by ID
+@app.route('/tone/<id>')
+@jwt_required()
+def tone(id):
+    tone = collection2.find_one({'_id':ObjectId(id)})
+    if tone:
+        tone["_id"] = str(tone["_id"])
+        return tone
+    else:
+        return jsonify({"error": "Tone Not Found"}), 404
 
 # Delete a tone
 @app.route('/tone/<id>', methods=['DELETE'])
 @jwt_required()
 def delete_tone(id):
-    mongo.db.tones.delete_one({'_id':ObjectId(id)})
-    resp = jsonify("Tone Deleted Successfully")
-    resp.status_code = 200
-    return resp
+    id = ObjectId(id)
+    result = collection2.delete_one({"_id": ObjectId(id)})
 
-# Get all wallpapers
-@app.route('/wallpapers', methods=['GET'])
-@jwt_required()
-def get_wallpapers():
-    wallpapers = mongo.db.wallpapers.find()
-    resp = dumps(wallpapers)
-    return resp
+    if result.deleted_count > 0:
+        return jsonify({"message": "Tone deleted successfully"})
+    else:
+        return jsonify({"error": "Tone not found or not deleted"}), 404
 
-# Get a specific wallpaper by ID
-@app.route('/wallpaper/<id>')
-@jwt_required()
-def wallpaper(id):
-    wallpaper = mongo.db.wallpapers.find_one({'_id':ObjectId(id)})
-    resp = dumps(wallpaper)
-    return resp
+validation_rules3 = {
+    "downloads": "required",
+    "visited": "required",
+    "description": "required",
+    "imageURL": "required",
+    "title": "required"
+    }
 
 # Create a wallpaper
 @app.route('/wallpapers', methods=['POST'])
-@jwt_required()
 def create_wallpaper():
-    _json = request.json
-    _downloads = _json['downloads']
-    _visited = _json['visited']
-    _description = _json['description']
-    _imageURL = _json['imageURL']
-    _title = _json['title']
+    data = request.get_json()
+    # Perform your validations
+    validation_errors = validate_data(data, validation_rules3)
 
-    if _downloads and _visited and _description and _imageURL and _title and request.method == 'POST':
-        id = mongo.db.wallpapers.insert_one({'downloads': _downloads, 'visited': _visited, 'description': _description, 'imageURL': _imageURL, 'title': _title })
-        return {"data":"Wallpaper Added Successfully"}
-    else:
-        return {'error':'Wallpaper Not Found'}
+    if validation_errors:
+        # If there are validation errors, send a response with the errors
+        return jsonify({"errors": validation_errors}), 400
+
+    inserted_id = collection3.insert_one(data).inserted_id
+
+    # If validation passes, create a response with the desired data
+    response_data = {
+        "downloads": data.get("downloads"),
+        "visited": data.get("visited"),
+        "description": data.get("description"),
+        "imageURL": data.get("imageURL"),
+        "title": data.get("title"),
+        "_id": str(inserted_id)
+        # Add more fields as needed
+    }
+
+    return jsonify(response_data)
+
+def validate_data(data, validation_rules3):
+    errors = []
+
+    for field, rule in validation_rules3.items():
+        if rule == "required" and not data.get(field):
+            errors.append(f"{field} is required.")
+        elif rule == "optional" and field in data and not data.get(field):
+            errors.append(f"{field} must be optional.")
+
+    return errors
 
 # Update a wallpaper
 @app.route('/wallpaper/<id>', methods=['PUT'])
 @jwt_required()
 def update_wallpaper(id):
-    _json = request.json
-    _id = id
-    _downloads = _json['downloads']
-    _visited = _json['visited']
-    _description = _json['description']
-    _imageURL = _json['imageURL']
-    _title = _json['title']
+    id = ObjectId(id)
+    data = request.get_json()
+    validation_errors = validate_data(data, validation_rules3)
 
-    if _downloads and _visited and _description and _imageURL and _title and request.method == 'PUT':
-        mongo.db.wallpapers.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)}, {'$set': {'downloads': _downloads, 'visited': _visited, 'description': _description, 'imageURL': _imageURL, 'title': _title }})
-        resp = jsonify("Wallpaper Updated Successfully")
-        resp.status_code = 200
-        return resp
+    if validation_errors:
+        return jsonify({"errors": validation_errors}), 400
+    
+    existing_document = collection3.find_one({"_id": id})
+
+    if existing_document is None:
+        return jsonify({"error": "Wallpaper not found"}), 404
+
+    result = collection3.update_one({"_id": ObjectId(id)}, {"$set": data})
+
+    response_data = {
+        "downloads": data.get("downloads"),
+        "visited": data.get("visited"),
+        "description": data.get("description"),
+        "imageURL": data.get("imageURL"),
+        "title": data.get("title"),
+        "_id": str(id)
+        # Add more fields as needed
+    }
+
+    if result.matched_count == 0:
+        return jsonify({"error": "Wallpaper not found"}), 404
+    elif result.modified_count == 0:
+        return jsonify({"error": "Wallpaper not updated"}), 404
+    else:
+        return jsonify(response_data)
+
+# Get all wallpapers
+@app.route('/wallpapers', methods=['GET'])
+@jwt_required()
+def get_wallpapers():
+    wallpapers = list(collection3.find())
+    data = []
+    for wallpaper in wallpapers:
+        wallpaper['_id'] = str(wallpaper['_id'])
+        data.append(wallpaper)
+    return jsonify(data)
+
+# Get a specific wallpaper by ID
+@app.route('/wallpaper/<id>')
+@jwt_required()
+def wallpaper(id):
+    wallpaper = collection3.find_one({'_id':ObjectId(id)})
+    if wallpaper:
+        wallpaper["_id"] = str(wallpaper["_id"])
+        return wallpaper
+    else:
+        return jsonify({"error": "Wallpaper Not Found"}), 404
+
 
 # Delete a wallpaper
 @app.route('/wallpaper/<id>', methods=['DELETE'])
 @jwt_required()
 def delete_wallpaper(id):
-    mongo.db.wallpapers.delete_one({'_id':ObjectId(id)})
-    resp = jsonify("Wallpaper Deleted Successfully")
-    resp.status_code = 200
-    return resp
+    id = ObjectId(id)
+    result = collection3.delete_one({"_id": ObjectId(id)})
+
+    if result.deleted_count > 0:
+        return jsonify({"message": "Wallpaper deleted successfully"})
+    else:
+        return jsonify({"error": "Wallpaper not found or not deleted"}), 404
 
 apis = [
     "http://localhost:8080/games",
@@ -338,16 +637,19 @@ apis = [
 
 @app.route('/getAllData', methods=['GET'])
 def get_aggregated_data():
-    aggregated_data = []
+    aggregated_data = {}
 
-    for api in apis:
-        try:
-            response = requests.get(api)
-            data = response.json()
-            aggregated_data.append(data)
-        except Exception as e:
-            aggregated_data.append({"error": str(e)})
+    # Get a list of all collection names in the database
+    collections = db.list_collection_names()
 
+    for collection_name in collections:
+        # Retrieve all documents from the current collection
+        collection_data = list(db[collection_name].find())
+          # Convert ObjectId to string in each document
+        for entry in collection_data:
+            entry['_id'] = str(entry['_id'])
+        aggregated_data[collection_name] = collection_data
+        
     return jsonify(aggregated_data)
 
 if __name__ == '__main__':

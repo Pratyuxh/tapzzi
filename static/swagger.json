@@ -3,11 +3,7 @@
   "info": {
     "description": "SuperMindsIT",
     "version": "1.0.0",
-    "title": "Tapzzi API",
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
-    }
+    "title": "Tapzzi API"
   },
   "servers": [
     {
@@ -18,21 +14,6 @@
       "url": "https://tapzzi-api.superminds.dev",
       "description": "Production server"
     }
-    ],
-  "securityDefinitions": {
-      "bearerAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "Authorization",
-        "required": true,
-        "description": "Bearer token to access these api endpoints",
-        "scheme": "bearer"
-      }
-  }, 
-  "security": [
-          {
-            "bearerAuth": []
-          }
     ],
   "tags": [
        {
@@ -56,7 +37,7 @@
         "description": "API to get All Data. "
       }
     ],
-    "paths": {
+  "paths": {
       "/login": {
         "post": {
           "tags": [
@@ -64,11 +45,7 @@
           ],
           "summary": "Create a new token",
           "description": "This endpoint will create token",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "security":[{"JWT": {} }],
           "requestBody": {
             "description": "Login Post Object",
             "required": true,
@@ -84,7 +61,7 @@
             "application/json"
           ],
           "responses": {
-            "201": {
+            "200": {
               "description": "Token Created",
               "content": {
                 "application/json": {
@@ -124,20 +101,31 @@
           ],
           "summary": "Return Games",
           "description": "This endpoint will get all Games",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "security":[{"JWT": {} }],
           "produces": "['application/json']",
           "responses": {
             "200": {
               "description": "Games Data",
               "content": {
                 "application/json": {
-                  "schema": {
-                    "$ref": "#/schemas/games"
+                  "example": [
+                    {
+                    "_id":"655cc081add35235c1c1682c",
+                    "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+                    "imageUrl": "www.xyz.com",
+                    "title": "Games",
+                    "iframe": "http://xyz.com/index.html",
+                    "thumbnail": "/assets/games/cricket.jpg"
+                  },
+                  {
+                    "_id":"655cc081add35235c1c1682d",
+                    "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+                    "imageUrl": "www.abc.com",
+                    "title": "Games",
+                    "iframe": "http://xyz.com/index.html",
+                    "thumbnail": "/assets/games/football.jpg"
                   }
+                ]
                 }
               }
             },
@@ -169,11 +157,6 @@
           ],
           "summary": "Create a new Game",
           "description": "This endpoint will create Game",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
           "requestBody": {
             "description": "Game Post Object",
             "required": true,
@@ -189,7 +172,7 @@
             "application/json"
           ],
           "responses": {
-            "201": {
+            "200": {
               "description": "Game Created",
               "content": {
                 "application/json": {
@@ -248,11 +231,7 @@
           ],
           "summary": "Get Game with given ID",
           "description": "This endpoint will get Game by ID.",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "security":[{"JWT": {} }],
           "parameters": [
             {
               "in": "path",
@@ -310,11 +289,7 @@
         "put": {
           "summary": "Update a Game by ID",
           "description": "This endpoint will update a game by ID",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "security":[{"JWT": {} }],
           "tags": [
             "Games"
           ],
@@ -389,11 +364,7 @@
         "delete": {
           "summary": "Delete Game by ID",
           "description": "This API Endpoint will delete Game by ID",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "security":[{"JWT": {} }],
           "tags": [
             "Games"
           ],
@@ -452,32 +423,29 @@
           }
         }
       },
-      "/games/image": {
-        "parameters": [
-          {
-            "name": "file",
-            "in": "path",
-            "required": true,
-            "description": "Image that we want to upload"
-          }
-        ],
+      "/games/<id>/image": {
         "post": {
           "tags": [
             "Games"
           ],
           "summary": "Upload an Image",
           "description": "This endpoint will upload a new Image",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "security":[{"JWT": {} }],
           "requestBody": {
             "content": {
               "multipart/form-data": {
                 "schema": { 
+                  "type": "object",
                   "properties": {
-                    "filename": {
+                    "file": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "string"
+                    },
+                    "device_type": {
                       "type": "string",
                       "format": "string"
                     }
@@ -490,8 +458,8 @@
             "application/json"
           ],
           "responses": {
-            "201": {
-              "description": "Image Game Created",
+            "200": {
+              "description": "Game Image Created",
               "content": {
                 "application/json": {
                 "schema": {
@@ -521,31 +489,19 @@
               }
             }
           }
-        },
+        }
+      },
+      "/games/<id>/image/<filename>": {
         "delete": {
           "summary": "Delete Game Image",
           "description": "This endpoint will Delete Game Image",
-          "securityDefinitions": {
-            "bearerAuth": {
-              "type": "apiKey",
-              "in": "header",
-              "name": "Authorization",
-              "description": "Bearer token to access these api endpoints",
-              "scheme": "bearer"
-            }
-          },
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "security":[{"JWT": {} }],
           "tags": [
             "Games"
           ],
-          
           "responses": {
             "200": {
-              "description": "Games Image Data",
+              "description": "Game Image Data",
               "content": {
                 "application/json": {
                   "schema": {
@@ -560,6 +516,16 @@
                 "application/json": {
                   "schema": {
                     "$ref": "#/serverResponseExample/unauthorizedError"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
                   }
                 }
               }
@@ -584,19 +550,30 @@
             ],
             "summary": "Returns Wallpapers",
             "description": "This endpoint will get all wallpapers",
-            "security": [
-              {
-                "bearerAuth": []
-              }
-            ],
+            "security":[{"JWT": {} }],
             "responses": {
               "200": {
                 "description": "Wallpapers Data",
                 "content": {
                   "application/json": {
-                    "schema": {
-                      "$ref": "#/schemas/wallpapers"
+                    "example": [
+                      {
+                      "_id":"655cc081add35235c1c1682c",
+                      "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+                      "imageURL":"/assets/wallpaper.png",
+                      "title": "wallpapers",
+                      "downloads": "5k",
+                      "visited": "9k"
+                    },
+                    {
+                      "_id":"655cc081add35235c1c1682d",
+                      "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+                      "imageURL":"/assets/wallpaper.png",
+                      "title": "wallpapers",
+                      "downloads": "5k",
+                      "visited": "9k"
                     }
+                  ]
                   }
                 }
               },
@@ -628,11 +605,6 @@
             ],
             "summary": "Create a new Wallpaper",
             "description": "This endpoint will create new wallpaper",
-            "security": [
-              {
-                "bearerAuth": []
-              }
-            ],
             "requestBody": {
               "description": "Wallpaper Request Object",
               "required": true,
@@ -648,7 +620,7 @@
               "application/json"
             ],
             "responses": {
-              "201": {
+              "200": {
                 "description": "Wallpaper Created",
                 "content": {
                   "application/json": {
@@ -707,11 +679,7 @@
             ],
             "summary": "Get Wallpaper with given ID",
             "description": "This endpoint will create Wallpaper with given id",
-            "security": [
-              {
-                "bearerAuth": []
-              }
-            ],
+            "security":[{"JWT": {} }],
             "parameters": [
               {
                 "in": "path",
@@ -769,11 +737,7 @@
           "put": {
             "summary": "Update a Wallpaper by ID",
             "description": "This endpoint will update Wallpaper by ID",
-            "security": [
-              {
-                "bearerAuth": []
-              }
-            ],
+            "security":[{"JWT": {} }],
             "tags": [
               "Wallpapers"
             ],
@@ -848,11 +812,7 @@
           "delete": {
             "summary": "Delete Wallpaper by ID",
             "description": "This endpoint will Delete Wallpaper by ID",
-            "security": [
-              {
-                "bearerAuth": []
-              }
-            ],
+            "security":[{"JWT": {} }],
             "tags": [
               "Wallpapers"
             ],
@@ -918,19 +878,32 @@
             ],
             "summary": "Return tones",
             "description": "This endpoint will get tones",
-            "security": [
-              {
-                "bearerAuth": []
-              }
-            ],
+            "security":[{"JWT": {} }],
             "responses": {
               "200": {
                 "description": "Tones Data",
                 "content": {
                   "application/json": {
-                    "schema": {
-                      "$ref": "#/schemas/tones"
+                    "example": [
+                      {
+                      "_id":"655cc081add35235c1c1682c",
+                      "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+                      "audio":"https://xyz.com",
+                      "Downloads": "5.5k",
+                      "title": "Three Little Birds",
+                      "urlTitle": "three-little-birds",
+                      "visited": "10.5k"
+                    },
+                    {
+                      "_id":"655cc081add35235c1c1682d",
+                      "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+                      "audio":"https://xyz.com",
+                      "Downloads": "5.5k",
+                      "title": "Three Little Birds",
+                      "urlTitle": "three-little-birds",
+                      "visited": "10.5k"
                     }
+                  ]
                   }
                 }
               },
@@ -968,7 +941,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/schemas/tones"
+                    "$ref": "#/schemas/tone"
                   }
                 }
               }
@@ -977,7 +950,7 @@
               "application/json"
             ],
             "responses": {
-              "201": {
+              "200": {
                 "description": "Tone Created",
                 "content": {
                   "application/json": {
@@ -1036,6 +1009,7 @@
             ],
             "summary": "Get tone with given ID",
             "description": "This endpoint will get tone by ID",
+            "security":[{"JWT": {} }],
             "parameters": [
               {
                 "in": "path",
@@ -1093,6 +1067,7 @@
           "put": {
             "summary": "Update a Tone by ID",
             "description": "This endpoint will update Tone by ID",
+            "security":[{"JWT": {} }],
             "tags": [
               "Tones"
             ],
@@ -1167,6 +1142,7 @@
           "delete": {
             "summary": "Delete Tone by ID",
             "description": "This endpoint will Delete Tone by ID",
+            "security":[{"JWT": {} }],
             "tags": [
               "Tones"
             ],
@@ -1231,12 +1207,8 @@
             "Default"
           ],
           "summary": "Return All Data",
-          "description": "This endpoint will get all data",
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
+          "description": "This endpoint will get all bookings",
+          "security":[{"JWT": {} }],
           "produces": "['application/json']",
           "responses": {
             "200": {
@@ -1251,21 +1223,23 @@
       }
     },
   "components": {
-      "bearerAuth":{
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+    "securitySchemes":{
+    "JWT":{
+          "in": "header",
+          "name": "Authorization",
+          "type": "apiKey"
+        }
       }
-    },
-      "schemas": {
-        "id": {
+      },
+    "schemas": {
+      "id": {
           "properties": {
             "id": {
               "type": "string"
             }
           }
-        },
-        "login": {
+      },
+      "login": {
           "type": "object",
           "properties": {
               "username": {
@@ -1277,8 +1251,8 @@
                   "format": "number"
                 }
           }
-        },
-        "game": {
+      },
+      "game": {
           "type": "object",
           "properties": {
               "description": {
@@ -1302,8 +1276,8 @@
                   "format": "string"
                 }
           }
-        },
-        "tone": {
+      },
+      "tone": {
           "type": "object",
           "properties": {
                 "description": {
@@ -1331,8 +1305,8 @@
                   "format": "string"
                 }
           }
-        },
-        "wallpaper": {
+      },
+      "wallpaper": {
           "type": "object",
           "properties": {
               "description": {
@@ -1356,8 +1330,8 @@
                   "format": "string"
                 }
           }
-        },
-        "games": {
+      },
+      "games": {
           "type": "object",
           "properties": {
             "game": {
@@ -1367,8 +1341,8 @@
             }
           }
        }
-        },
-        "tones": {
+      },
+      "tones": {
           "type": "object",
           "properties": {
             "tone": {
@@ -1378,8 +1352,8 @@
             }
           }
        }
-        },
-        "wallpapers": {
+      },
+      "wallpapers": {
           "type": "object",
           "properties": {
             "contact": {
@@ -1389,11 +1363,10 @@
             }
           }
        }
-        }
+      }
     },
   "serverResponseExample": {
     "notFound": {
-      "code": 404,
       "message": "Not found"
     },
     "serverError": {
@@ -1404,8 +1377,7 @@
     },
     "unauthorizedError": {
       "example": {
-       "code": 401,
-       "message": "Please authenticate"
+        "msg": "Missing Authorization Header"
       }
     },
     "createLoginError": {
@@ -1439,7 +1411,7 @@
     },
     "createGameSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageUrl": "www.xyz.com",
         "title": "Games",
@@ -1449,7 +1421,7 @@
     },
     "createWallpaperSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
@@ -1459,7 +1431,7 @@
     },
     "createToneSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "audio":"https://xyz.com",
         "Downloads": "5.5k",
@@ -1470,12 +1442,12 @@
     },
     "createGameImageSuccess": {
       "example": {
-        "file_url": "https://tapzzi.blr1.digitaloceanspaces.com/tapzzi/filename"
+        "file_url": "https://tapzzi.fra1.digitaloceanspaces.com/tapzzi/filename"
       }
     },
     "getGameByIdSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageUrl": "www.xyz.com",
         "title": "Games",
@@ -1485,7 +1457,7 @@
     },
     "getWallpaperByIdSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
@@ -1495,7 +1467,7 @@
     },
     "getToneByIdSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "audio":"https://xyz.com",
         "Downloads": "5.5k",
@@ -1524,7 +1496,7 @@
     },
     "updateGameByIdSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageUrl": "www.xyz.com",
         "title": "Games",
@@ -1534,7 +1506,7 @@
     },
     "updateWallpaperByIdSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "imageURL":"/assets/wallpaper.png",
         "title": "wallpapers",
@@ -1544,7 +1516,7 @@
     },
     "updateToneByIdSuccess": {
       "example": {
-        "id": 1,
+        "_id":"655cc081add35235c1c1682c",
         "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
         "audio":"https://xyz.com",
         "Downloads": "5.5k",
@@ -1573,5 +1545,5 @@
         "message": "Tone Deleted successfully"
       }
     }
-  }
+    }
   }
