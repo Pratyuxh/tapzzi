@@ -1,5 +1,4 @@
 import os
-# import certifi
 import boto3
 from flask_pymongo import PyMongo
 from flask_restful import Resource, Api
@@ -26,7 +25,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 
 # mongodb+srv://pratyush:<replace-with-your-password>@superminds-cluster-7f2d92d1.mongo.ondigitalocean.com/tapzzi?tls=true&authSource=admin&replicaSet=superminds-cluster
 connection_string = f"mongodb+srv://pratyush:43O86u20v1HPDL9h@superminds-cluster-7f2d92d1.mongo.ondigitalocean.com/tapzzi?tls=true&authSource=admin&replicaSet=superminds-cluster" 
-client = MongoClient(connection_string) #tlsCAFile=certifi.where()
+client = MongoClient(connection_string)
 app.config['MONGO_URI'] = "mongodb+srv://pratyush:43O86u20v1HPDL9h@superminds-cluster-7f2d92d1.mongo.ondigitalocean.com/tapzzi?tls=true&authSource=admin&replicaSet=superminds-cluster"
 mongo = PyMongo(app)
 

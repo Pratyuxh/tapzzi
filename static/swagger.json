@@ -11,7 +11,7 @@
       "description": "Local server"
     },
     {
-      "url": "https://tapzzi-api.superminds.dev",
+      "url": "https://tapzzi-backend.superminds.dev",
       "description": "Production server"
     }
     ],
