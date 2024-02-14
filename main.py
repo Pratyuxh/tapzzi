@@ -5,7 +5,7 @@ from flask_restful import Resource, Api
 from pymongo import MongoClient
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
 from flask import Flask, Response, jsonify, request, make_response, render_template, flash, redirect, g, after_this_request
 from bson.json_util import dumps
 from bson.objectid import ObjectId
@@ -57,6 +57,7 @@ swaggerui_blueprint = get_swaggerui_blueprint(
             },
         },
         'security': [{'basicAuth': []}],
+        'validatorUrl': None
     },
 )
 
@@ -79,28 +80,89 @@ headers = {
     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwMDQ3MTg0NCwianRpIjoiNjg1MDdkZDAtOGZiYS00NTM1LTk0M2UtODE3MDcwODMyODM2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InVzZXIxIiwibmJmIjoxNzAwNDcxODQ0LCJleHAiOjE3MDA0NzI3NDR9.LwwPvBpOwU6xi6pGAEMUo7KkzFfAZ4S_VYPLrS90k_k'
 }
 
-@app.route('/register', methods=['POST'])
-def register_user():
-    data = request.get_json()
+class Register(Resource):
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        role = data.get('role', 'user')  # Default role is 'user'
+        if not username or not password:
+            return {'message': 'Both username and password are required'}, 400
+        if collection.find_one({'username': username}):
+            return {'message': 'Username already exists'}, 400
+        hashed_password = bcrypt.generate_password_hash(
+            password).decode('utf-8')
+        collection.insert_one(
+            {'username': username, 'password': hashed_password, 'role': role})
+        return {'message': 'User registered successfully'}, 201
 
-    if 'username' not in data or 'password' not in data:
-        return jsonify({'error': 'Username and password are required'}), 400
+# Login endpoint for admins
 
-    username = data['username']
-    password = data['password']
+class AdminLogin(Resource):
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        user = collection.find_one({'username': username, 'role': 'admin'})
+        if not user or not bcrypt.check_password_hash(user['password'], password):
+            return {'message': 'Invalid admin credentials'}, 401
+        access_token = create_access_token(identity=username)
+        return {'access_token': access_token}, 200
 
-    existing_user = mongo.db.users.find_one({'username': username})
-    if existing_user:
-        return jsonify({'error': 'Username already exists'}), 409
+# Login endpoint for users
 
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+class UserLogin(Resource):
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        user = collection.find_one({'username': username, 'role': 'user'})
+        if not user or not bcrypt.check_password_hash(user['password'], password):
+            return {'message': 'Invalid user credentials'}, 401
+        access_token = create_access_token(identity=username)
+        return {'access_token': access_token}, 200
 
-    mongo.db.users.insert_one({
-        'username': username,
-        'password': hashed_password
-    })
+api.add_resource(Register, '/register')
+api.add_resource(AdminLogin, '/admin/login')
+api.add_resource(UserLogin, '/user/login')
 
-    return jsonify({'message': 'User registered successfully'}), 201
+blacklist = set()  # Set to store revoked tokens
+
+@app.route('/logout', methods=['DELETE'])
+@jwt_required()
+def logout():
+    jti = get_jwt()['jti']
+    blacklist.add(jti)
+    return jsonify({"message": "Successfully logged out"}), 200
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_data):
+    jti = jwt_data['jti']
+    return jti in blacklist 
+
+# @app.route('/register', methods=['POST'])
+# def register_user():
+#     data = request.get_json()
+
+#     if 'username' not in data or 'password' not in data:
+#         return jsonify({'error': 'Username and password are required'}), 400
+
+#     username = data['username']
+#     password = data['password']
+
+#     existing_user = mongo.db.users.find_one({'username': username})
+#     if existing_user:
+#         return jsonify({'error': 'Username already exists'}), 409
+
+#     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+#     mongo.db.users.insert_one({
+#         'username': username,
+#         'password': hashed_password
+#     })
+
+#     return jsonify({'message': 'User registered successfully'}), 201
 
 @auth.verify_password
 def verify_password(username, password):
@@ -123,20 +185,20 @@ def verify_password(username, password):
 def index():
     return "Hello, {}!".format(auth.current_user())
 
-# Token creation route (login)
-@app.route('/login', methods=['GET','POST'])
-def login():
-    data = request.get_json()
-    username = data.get('username', None)
-    password = data.get('password', None)
+# # Token creation route (login)
+# @app.route('/login', methods=['GET','POST'])
+# def login():
+#     data = request.get_json()
+#     username = data.get('username', None)
+#     password = data.get('password', None)
 
-    user = mongo.db.users.find_one({'username': username})
+#     user = mongo.db.users.find_one({'username': username})
 
-    if user and user['password'] == password:
-        access_token = create_access_token(identity=username)
-        return jsonify(access_token=access_token), 200
-    else:
-        return jsonify({'message': 'Invalid credentials'}), 401
+#     if user and user['password'] == password:
+#         access_token = create_access_token(identity=username)
+#         return jsonify(access_token=access_token), 200
+#     else:
+#         return jsonify({'message': 'Invalid credentials'}), 401
 
 validation_rules = {
     "description": "required",
@@ -627,29 +689,29 @@ def delete_wallpaper(id):
     else:
         return jsonify({"error": "Wallpaper not found or not deleted"}), 404
 
-apis = [
-    "http://localhost:8080/games",
-    "http://localhost:8080/tones",
-    "http://localhost:8080/wallpapers"
-    # Add more endpoints as needed
-]
+# apis = [
+#     "http://localhost:8080/games",
+#     "http://localhost:8080/tones",
+#     "http://localhost:8080/wallpapers"
+#     # Add more endpoints as needed
+# ]
 
-@app.route('/getAllData', methods=['GET'])
-def get_aggregated_data():
-    aggregated_data = {}
+# @app.route('/getAllData', methods=['GET'])
+# def get_aggregated_data():
+#     aggregated_data = {}
 
-    # Get a list of all collection names in the database
-    collections = db.list_collection_names()
+#     # Get a list of all collection names in the database
+#     collections = db.list_collection_names()
 
-    for collection_name in collections:
-        # Retrieve all documents from the current collection
-        collection_data = list(db[collection_name].find())
-          # Convert ObjectId to string in each document
-        for entry in collection_data:
-            entry['_id'] = str(entry['_id'])
-        aggregated_data[collection_name] = collection_data
+#     for collection_name in collections:
+#         # Retrieve all documents from the current collection
+#         collection_data = list(db[collection_name].find())
+#           # Convert ObjectId to string in each document
+#         for entry in collection_data:
+#             entry['_id'] = str(entry['_id'])
+#         aggregated_data[collection_name] = collection_data
         
-    return jsonify(aggregated_data)
+#     return jsonify(aggregated_data)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

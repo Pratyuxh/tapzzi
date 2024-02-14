@@ -16,9 +16,9 @@
     }
     ],
   "tags": [
-       {
-        "name": "Login",
-        "description": "API for Login. "
+      {
+        "name": "Authentication",
+        "description": "API for Authentication. "
       },
       {
         "name": "Games",
@@ -31,21 +31,71 @@
       {
         "name": "Tones",
         "description": "API for Tones. "
-      },
-      {
-        "name": "Default",
-        "description": "API to get All Data. "
       }
     ],
   "paths": {
-      "/login": {
+      "/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Creates a new User",
+        "description": "This endpoint will create a new user",
+        "requestBody": {
+          "description": "Signup Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/schemas/signup"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User Created",
+            "content": {
+              "application/json": {
+              "schema": {
+              "$ref": "#/serverResponseExample/createSignupSuccess"
+                }
+              }
+            }
+          }, 
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/serverResponseExample/createSignupError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/serverResponseExample/serverError"
+                }
+              }
+            }
+          }
+        }
+      }
+      },
+      "/admin/login": {
         "post": {
           "tags": [
-            "Login"
+            "Authentication"
           ],
           "summary": "Create a new token",
           "description": "This endpoint will create token",
-          "security":[{"JWT": {} }],
           "requestBody": {
             "description": "Login Post Object",
             "required": true,
@@ -77,6 +127,117 @@
                 "application/json": {
                   "schema": {
                     "$ref": "#/serverResponseExample/createLoginError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/user/login": {
+        "post": {
+          "tags": [
+            "Authentication"
+          ],
+          "summary": "Create a new token",
+          "description": "This endpoint will create token",
+          "requestBody": {
+            "description": "Login Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/schemas/login"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Token Created",
+              "content": {
+                "application/json": {
+                "schema": {
+                "$ref": "#/serverResponseExample/createLoginSuccess"
+                  }
+                }
+              }
+            }, 
+            "400": {
+              "description": "Bad Request.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/createLoginError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/serverError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/logout": {
+        "delete": {
+          "tags": [
+            "Authentication"
+          ],
+          "summary": "Logouts the user",
+          "description": "This endpoint will help the user to logout from the system.",
+          "security":[{"JWT": {} }],
+          "requestBody": {
+            "description": "Logout Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/schemas/logout"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Logged out",
+              "content": {
+                "application/json": {
+                "schema": {
+                "$ref": "#/serverResponseExample/createLogoutSuccess"
+                  }
+                }
+              }
+            }, 
+            "400": {
+              "description": "Bad Request.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/serverResponseExample/createLogoutError"
                   }
                 }
               }
@@ -1200,26 +1361,6 @@
               }
             }
           }
-      },
-      "/getAllData":{
-        "get": {
-          "tags": [
-            "Default"
-          ],
-          "summary": "Return All Data",
-          "description": "This endpoint will get all bookings",
-          "security":[{"JWT": {} }],
-          "produces": "['application/json']",
-          "responses": {
-            "200": {
-              "description": "All Data",
-              "content": {
-                "application/json": {
-                }
-              }
-            }
-          }
-        }
       }
     },
   "components": {
@@ -1227,7 +1368,8 @@
     "JWT":{
           "in": "header",
           "name": "Authorization",
-          "type": "apiKey"
+          "type": "apiKey",
+          "description": "JWT authorization token. Include 'Bearer' followed by a space and the token value."
         }
       }
       },
@@ -1251,6 +1393,38 @@
                   "format": "number"
                 }
           }
+      },
+      "signup": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+            "username": {
+                "type": "string",
+                "format": "string"
+              },
+            "password": {
+                "type": "string",
+                "format": "string"
+              },
+            "role": {
+                "type": "string",
+                "format": "string"
+              }
+        }
+      },
+      "logout": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+            "username": {
+                "type": "string",
+                "format": "string"
+              },
+            "password": {
+                "type": "string",
+                "format": "number"
+              }
+        }
       },
       "game": {
           "type": "object",
@@ -1386,6 +1560,17 @@
         "message": "Username is required, Password is required"
       }
     },
+    "createSignupError": {
+      "example": {
+        "code": 400,
+        "message": "Username is required, Password is required"
+      }
+    },
+    "createLogoutError": {
+      "example": {
+        "message": "Access Token is required "
+      }
+    },
     "createGameError": {
       "example": {
         "code": 400,
@@ -1407,6 +1592,16 @@
     "createLoginSuccess": {
       "example": {
         "access_token" :"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwMTMyNDI0NSwianRpIjoiMGJkNWI2ZGQtYjc5Yy00ODBkLWE3NzAtMzMyYmVkMWFkMWU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InVzZXIxIiwibmJmIjoxNzAxMzI0MjQ1LCJleHAiOjE3MDEzMjUxNDV9.E1nzEIXCqMMmmE5eGbo6zdEOpVFV_bWeqFzzZ8Zg_48"
+      }
+    },
+    "createSignupSuccess": {
+      "example": {
+        "message": "User registered successfully"
+      }
+    },
+    "createLogoutSuccess": {
+      "example": {
+        "message": "Successfully logged out"
       }
     },
     "createGameSuccess": {
