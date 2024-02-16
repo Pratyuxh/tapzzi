@@ -209,7 +209,7 @@ validation_rules = {
     }
 
 # Create a game
-@app.route('/games', methods=['POST'])
+@app.route('/game', methods=['POST'])
 def create_game():
     data = request.get_json()
     # Perform your validations
@@ -251,27 +251,23 @@ def validate_data(data, validation_rules):
 def update_game(id):
     id = ObjectId(id)
     data = request.get_json()
-    validation_errors = validate_data(data, validation_rules)
-
-    if validation_errors:
-        return jsonify({"errors": validation_errors}), 400
-    
     existing_document = collection1.find_one({"_id": id})
 
     if existing_document is None:
         return jsonify({"error": "Game not found"}), 404
 
-    result = collection1.update_one({"_id": ObjectId(id)}, {"$set": data})
-
     response_data = {
-        "description": data.get("description"),
-        "imageUrl": data.get("imageUrl"),
-        "title": data.get("title"),
-        "iframe": data.get("iframe"),
-        "thumbnail": data.get("thumbnail"),
-        "_id": str(id)
+        "description": existing_document.get("description"),
+        "imageUrl": existing_document.get("imageUrl"),
+        "title": existing_document.get("title"),
+        "iframe": existing_document.get("iframe"),
+        "thumbnail": existing_document.get("thumbnail")
         # Add more fields as needed
     }
+
+    data.pop('_id', None)
+    merged_data = {**response_data, **data}
+    result = collection1.update_many({"_id": ObjectId(id)}, {"$set": merged_data})
 
     if result.matched_count == 0:
         return jsonify({"error": "Game not found"}), 404
@@ -281,7 +277,7 @@ def update_game(id):
         return jsonify(response_data)
 
 # Get all games
-@app.route('/games', methods=['GET'])
+@app.route('/game', methods=['GET'])
 @jwt_required()
 def get_games():
     games = list(collection1.find())
@@ -316,8 +312,8 @@ def delete_game(id):
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 MAX_FILE_SIZE_BYTES = 500 * 500 #10 * 1024 * 1024
 DO_SPACES_ENDPOINT = 'https://tapzzi.blr1.digitaloceanspaces.com'  # Replace with your Space URL
-DO_ACCESS_KEY = 'DO00FVYZELDGLP9XU3Y4'  # Replace with your DigitalOcean Spaces access key
-DO_SECRET_KEY = '3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g'  # Replace with your DigitalOcean Spaces secret key
+DO_ACCESS_KEY = 'DO00H8HLFYNACV6LJ3GP'  # Replace with your DigitalOcean Spaces access key
+DO_SECRET_KEY = 'fKbFfbNG2PcuyLCZ79xjePWYjmCP9wGCNdWgfgxCTnY'  # Replace with your DigitalOcean Spaces secret key
 DO_BUCKET_NAME = 'tapzzi'  # Replace with your DigitalOcean Spaces bucket name
 
 # Create a connection to DigitalOcean Spaces
@@ -363,15 +359,15 @@ def upload_to_digitalocean(file, file_name, device_type, game_id):
         raise Exception(str(e))
 
 # Create a game image
-@app.route('/games/<id>/image', methods=['POST', 'DELETE'])
+@app.route('/game/<id>/image', methods=['POST', 'DELETE'])
 @jwt_required()
 def upload_and_delete_image(id):
     try:
         file_name = None
 
         s3 = boto3.client('s3',
-            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
-            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
+            aws_access_key_id='DO00H8HLFYNACV6LJ3GP',
+            aws_secret_access_key='fKbFfbNG2PcuyLCZ79xjePWYjmCP9wGCNdWgfgxCTnY',
             endpoint_url=DO_SPACES_ENDPOINT
         )
 
@@ -403,8 +399,8 @@ def upload_and_delete_image(id):
 
             # Delete the file from DigitalOcean Spaces
             s3 = boto3.client('s3',
-            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
-            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
+            aws_access_key_id='DO00H8HLFYNACV6LJ3GP',
+            aws_secret_access_key='fKbFfbNG2PcuyLCZ79xjePWYjmCP9wGCNdWgfgxCTnY',
             endpoint_url=DO_SPACES_ENDPOINT
         )
             # filename = request.json.get('filename')  # Assuming you send the filename in the request body
@@ -423,8 +419,8 @@ def upload_and_delete_image(id):
 def delete_file_from_digitalocean(file_name):
     try:
         s3 = boto3.client('s3',
-            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
-            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
+            aws_access_key_id='DO00H8HLFYNACV6LJ3GP',
+            aws_secret_access_key='fKbFfbNG2PcuyLCZ79xjePWYjmCP9wGCNdWgfgxCTnY',
             endpoint_url=DO_SPACES_ENDPOINT
         )
 
@@ -441,7 +437,7 @@ def delete_file_from_mongodb(file_name):
     files_collection.delete_one({'filename': file_name})
 
 # Delete a game image
-@app.route('/games/<id>/image/<filename>', methods=['DELETE'])
+@app.route('/game/<id>/image/<filename>', methods=['DELETE'])
 @jwt_required()
 def delete_uploaded_image(id, filename):
     try:
@@ -466,7 +462,7 @@ validation_rules2 = {
     }
 
 # Create a tone
-@app.route('/tones', methods=['POST'])
+@app.route('/tone', methods=['POST'])
 def create_tone():
     data = request.get_json()
     # Perform your validations
@@ -509,28 +505,24 @@ def validate_data(data, validation_rules2):
 def update_tone(id):
     id = ObjectId(id)
     data = request.get_json()
-    validation_errors = validate_data(data, validation_rules2)
-
-    if validation_errors:
-        return jsonify({"errors": validation_errors}), 400
-    
     existing_document = collection2.find_one({"_id": id})
 
     if existing_document is None:
         return jsonify({"error": "Tone not found"}), 404
 
-    result = collection2.update_one({"_id": ObjectId(id)}, {"$set": data})
-
     response_data = {
-        "description": data.get("description"),
-        "audio": data.get("audio"),
-        "downloads": data.get("downloads"),
-        "title": data.get("title"),
-        "urlTitle": data.get("urlTitle"),
-        "visited": data.get("visited"),
-        "_id": str(id)
+        "description": existing_document.get("description"),
+        "audio": existing_document.get("audio"),
+        "downloads": existing_document.get("downloads"),
+        "title": existing_document.get("title"),
+        "urlTitle": existing_document.get("urlTitle"),
+        "visited": existing_document.get("visited")
         # Add more fields as needed
     }
+
+    data.pop('_id', None)
+    merged_data = {**response_data, **data}
+    result = collection2.update_many({"_id": ObjectId(id)}, {"$set": merged_data})
 
     if result.matched_count == 0:
         return jsonify({"error": "Tone not found"}), 404
@@ -541,7 +533,7 @@ def update_tone(id):
 
 
 # Get all tones
-@app.route('/tones', methods=['GET'])
+@app.route('/tone', methods=['GET'])
 @jwt_required()
 def get_tones():
     tones = list(collection2.find())
@@ -583,7 +575,7 @@ validation_rules3 = {
     }
 
 # Create a wallpaper
-@app.route('/wallpapers', methods=['POST'])
+@app.route('/wallpaper', methods=['POST'])
 def create_wallpaper():
     data = request.get_json()
     # Perform your validations
@@ -625,27 +617,23 @@ def validate_data(data, validation_rules3):
 def update_wallpaper(id):
     id = ObjectId(id)
     data = request.get_json()
-    validation_errors = validate_data(data, validation_rules3)
-
-    if validation_errors:
-        return jsonify({"errors": validation_errors}), 400
-    
     existing_document = collection3.find_one({"_id": id})
 
     if existing_document is None:
         return jsonify({"error": "Wallpaper not found"}), 404
 
-    result = collection3.update_one({"_id": ObjectId(id)}, {"$set": data})
-
     response_data = {
-        "downloads": data.get("downloads"),
-        "visited": data.get("visited"),
-        "description": data.get("description"),
-        "imageURL": data.get("imageURL"),
-        "title": data.get("title"),
-        "_id": str(id)
+        "downloads": existing_document.get("downloads"),
+        "visited": existing_document.get("visited"),
+        "description": existing_document.get("description"),
+        "imageURL": existing_document.get("imageURL"),
+        "title": existing_document.get("title")
         # Add more fields as needed
     }
+
+    data.pop('_id', None)
+    merged_data = {**response_data, **data}
+    result = collection3.update_many({"_id": ObjectId(id)}, {"$set": merged_data})
 
     if result.matched_count == 0:
         return jsonify({"error": "Wallpaper not found"}), 404
@@ -655,7 +643,7 @@ def update_wallpaper(id):
         return jsonify(response_data)
 
 # Get all wallpapers
-@app.route('/wallpapers', methods=['GET'])
+@app.route('/wallpaper', methods=['GET'])
 @jwt_required()
 def get_wallpapers():
     wallpapers = list(collection3.find())

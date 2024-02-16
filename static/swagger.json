@@ -40,14 +40,14 @@
           "Authentication"
         ],
         "summary": "Creates a new User",
-        "description": "This endpoint will create a new user",
+        "description": "This endpoint will create a new user.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>New User Registered</td>\n    <td>Register the User successfully </td>\n  </tr>\n  <tr>\n    <td>400</td>\n    <td>Bad Request</td>\n    <td>If user have incomplete request body.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Invalid Credentials</td>\n    <td>Invalid username or password</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If internal server error occured</td>\n  </tr>\n</table>",
         "requestBody": {
           "description": "Signup Post Object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/schemas/signup"
+                "$ref": "#/components/schemas/signup"
               }
             }
           }
@@ -61,7 +61,7 @@
             "content": {
               "application/json": {
               "schema": {
-              "$ref": "#/serverResponseExample/createSignupSuccess"
+              "$ref": "#/components/serverResponseExample/createSignupSuccess"
                 }
               }
             }
@@ -71,7 +71,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/serverResponseExample/createSignupError"
+                  "$ref": "#/components/serverResponseExample/createSignupError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/serverResponseExample/invalidcredentialsError"
                 }
               }
             }
@@ -81,7 +91,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/serverResponseExample/serverError"
+                  "$ref": "#/components/serverResponseExample/serverError"
                 }
               }
             }
@@ -95,14 +105,14 @@
             "Authentication"
           ],
           "summary": "Create a new token",
-          "description": "This endpoint will create token",
+          "description": "This endpoint will help to login in the system using the Bearer Token.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Token Created</td>\n    <td>Creates the token successfully </td>\n  </tr>\n  <tr>\n    <td>400</td>\n    <td>Bad Request</td>\n    <td>If user have incomplete request body.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Invalid Credentials</td>\n    <td>Invalid username or password</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If internal server error occured</td>\n  </tr>\n</table>",
           "requestBody": {
             "description": "Login Post Object",
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/schemas/login"
+                  "$ref": "#/components/schemas/adminlogin"
                 }
               }
             }
@@ -116,7 +126,7 @@
               "content": {
                 "application/json": {
                 "schema": {
-                "$ref": "#/serverResponseExample/createLoginSuccess"
+                "$ref": "#/components/serverResponseExample/createLoginSuccess"
                   }
                 }
               }
@@ -126,7 +136,17 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/createLoginError"
+                    "$ref": "#/components/serverResponseExample/createLoginError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid Credentials",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/serverResponseExample/invalidcredentialsError"
                   }
                 }
               }
@@ -136,7 +156,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -150,14 +170,14 @@
             "Authentication"
           ],
           "summary": "Create a new token",
-          "description": "This endpoint will create token",
+          "description": "This endpoint will help to login in the system using the Bearer Token.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Token Created</td>\n    <td>Creates the token successfully </td>\n  </tr>\n  <tr>\n    <td>400</td>\n    <td>Bad Request</td>\n    <td>If user have incomplete request body.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Invalid Credentials</td>\n    <td>Invalid username or password</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If internal server error occured</td>\n  </tr>\n</table>",
           "requestBody": {
             "description": "Login Post Object",
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/schemas/login"
+                  "$ref": "#/components/schemas/login"
                 }
               }
             }
@@ -171,7 +191,7 @@
               "content": {
                 "application/json": {
                 "schema": {
-                "$ref": "#/serverResponseExample/createLoginSuccess"
+                "$ref": "#/components/serverResponseExample/createLoginSuccess"
                   }
                 }
               }
@@ -181,7 +201,17 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/createLoginError"
+                    "$ref": "#/components/serverResponseExample/createLoginError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid Credentials",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/serverResponseExample/invalidcredentialsError"
                   }
                 }
               }
@@ -191,7 +221,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -205,7 +235,7 @@
             "Authentication"
           ],
           "summary": "Logouts the user",
-          "description": "This endpoint will help the user to logout from the system.",
+          "description": "This endpoint will help the user to logout from the system.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Logged Out</td>\n    <td>Successfully logouts from the system.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If token has been revoked.</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
           "security":[{"JWT": {} }],
           "requestBody": {
             "description": "Logout Post Object",
@@ -213,7 +243,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/schemas/logout"
+                  "$ref": "#/components/schemas/logout"
                 }
               }
             }
@@ -227,17 +257,17 @@
               "content": {
                 "application/json": {
                 "schema": {
-                "$ref": "#/serverResponseExample/createLogoutSuccess"
+                "$ref": "#/components/serverResponseExample/createLogoutSuccess"
                   }
                 }
               }
             }, 
-            "400": {
-              "description": "Bad Request.",
+            "401": {
+              "description": "Unauthorized Error",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/createLogoutError"
+                    "$ref": "#/components/serverResponseExample/logoutUnauthorizedError"
                   }
                 }
               }
@@ -247,7 +277,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -255,13 +285,13 @@
           }
         }
       },
-      "/games": {
+      "/game": {
         "get": {
           "tags": [
             "Games"
           ],
           "summary": "Return Games",
-          "description": "This endpoint will get all Games",
+          "description": "This endpoint will get all games.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Game Data</td>\n    <td>Return all the games.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
           "security":[{"JWT": {} }],
           "produces": "['application/json']",
           "responses": {
@@ -295,7 +325,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/unauthorizedError"
+                    "$ref": "#/components/serverResponseExample/unauthorizedError"
                   }
                 }
               }
@@ -305,7 +335,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -317,14 +347,14 @@
             "Games"
           ],
           "summary": "Create a new Game",
-          "description": "This endpoint will create Game",
+          "description": "This endpoint will create a new game.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Game Created</td>\n    <td>Returns the created game</td>\n  </tr>\n  <tr>\n    <td>400</td>\n    <td>Bad Request</td>\n    <td>Returns the validation errors.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
           "requestBody": {
             "description": "Game Post Object",
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/schemas/game"
+                  "$ref": "#/components/schemas/game"
                 }
               }
             }
@@ -338,7 +368,7 @@
               "content": {
                 "application/json": {
                 "schema": {
-                "$ref": "#/serverResponseExample/createGameSuccess"
+                "$ref": "#/components/serverResponseExample/createGameSuccess"
                   }
                 }
               }
@@ -348,7 +378,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/createGameError"
+                    "$ref": "#/components/serverResponseExample/createGameError"
                   }
                 }
               }
@@ -358,7 +388,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/unauthorizedError"
+                    "$ref": "#/components/serverResponseExample/unauthorizedError"
                   }
                 }
               }
@@ -368,7 +398,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -391,7 +421,7 @@
             "Games"
           ],
           "summary": "Get Game with given ID",
-          "description": "This endpoint will get Game by ID.",
+          "description": "This endpoint will get Game by given ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Game Data</td>\n    <td>Returns the game with given ID.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Game Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
           "security":[{"JWT": {} }],
           "parameters": [
             {
@@ -410,7 +440,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/getGameByIdSuccess"
+                    "$ref": "#/components/serverResponseExample/getGameByIdSuccess"
                   }
                 }
               }
@@ -420,7 +450,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/unauthorizedError"
+                    "$ref": "#/components/serverResponseExample/unauthorizedError"
                   }
                 }
               }
@@ -430,7 +460,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
+                    "$ref": "#/components/serverResponseExample/getGameByIdNotFoundError"
                   }
                 }
               }
@@ -440,7 +470,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -449,7 +479,7 @@
         },
         "put": {
           "summary": "Update a Game by ID",
-          "description": "This endpoint will update a game by ID",
+          "description": "This endpoint will update a game by given ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>game Data</td>\n    <td>Updates the game with given ID.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>game Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
           "security":[{"JWT": {} }],
           "tags": [
             "Games"
@@ -461,7 +491,7 @@
               "required": true,
               "description": "Update Game",
               "schema": {
-                "$ref": "#/schemas/id"
+                "$ref": "#/components/schemas/id"
               }
             }
           ],
@@ -471,7 +501,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/schemas/game"
+                  "$ref": "#/components/schemas/game"
                 }
               }
             }
@@ -485,7 +515,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/updateGameByIdSuccess"
+                    "$ref": "#/components/serverResponseExample/updateGameByIdSuccess"
                   }
                 }
               }
@@ -495,7 +525,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/unauthorizedError"
+                    "$ref": "#/components/serverResponseExample/unauthorizedError"
                   }
                 }
               }
@@ -505,7 +535,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
+                    "$ref": "#/components/serverResponseExample/getGameByIdNotFoundError"
                   }
                 }
               }
@@ -515,7 +545,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -524,7 +554,7 @@
         },
         "delete": {
           "summary": "Delete Game by ID",
-          "description": "This API Endpoint will delete Game by ID",
+          "description": "This API Endpoint will delete Game by ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Game</td>\n    <td>game Deleted Successfully.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Game Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
           "security":[{"JWT": {} }],
           "tags": [
             "Games"
@@ -536,7 +566,7 @@
               "required": true,
               "description": "Delete game",
               "schema": {
-                "$ref": "#/schemas/id"
+                "$ref": "#/components/schemas/id"
               }
             }
           ],
@@ -546,7 +576,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/deleteGameByIdSuccess"
+                    "$ref": "#/components/serverResponseExample/deleteGameByIdSuccess"
                   }
                 }
               }
@@ -556,7 +586,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/unauthorizedError"
+                    "$ref": "#/components/serverResponseExample/unauthorizedError"
                   }
                 }
               }
@@ -566,7 +596,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
+                    "$ref": "#/components/serverResponseExample/getGameByIdNotFoundError"
                   }
                 }
               }
@@ -576,7 +606,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -584,13 +614,13 @@
           }
         }
       },
-      "/games/<id>/image": {
+      "/game/<id>/image": {
         "post": {
           "tags": [
             "Games"
           ],
           "summary": "Upload an Image",
-          "description": "This endpoint will upload a new Image",
+          "description": "This endpoint will upload a new image.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Game Image Uploaded</td>\n    <td>Returns the fileurl.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
           "security":[{"JWT": {} }],
           "requestBody": {
             "content": {
@@ -624,7 +654,7 @@
               "content": {
                 "application/json": {
                 "schema": {
-                "$ref": "#/serverResponseExample/createGameImageSuccess"
+                "$ref": "#/components/serverResponseExample/createGameImageSuccess"
                   }
                 }
               }
@@ -634,7 +664,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/unauthorizedError"
+                    "$ref": "#/components/serverResponseExample/unauthorizedError"
                   }
                 }
               }
@@ -644,7 +674,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -652,10 +682,10 @@
           }
         }
       },
-      "/games/<id>/image/<filename>": {
+      "/game/<id>/image/<filename>": {
         "delete": {
           "summary": "Delete Game Image",
-          "description": "This endpoint will Delete Game Image",
+          "description": "This API Endpoint will delete game image.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Event Image Data</td>\n    <td>File abc.jpg deleted successfully.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>File Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",       
           "security":[{"JWT": {} }],
           "tags": [
             "Games"
@@ -666,7 +696,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/deleteGameImageByIdSuccess"
+                    "$ref": "#/components/serverResponseExample/deleteGameImageByIdSuccess"
                   }
                 }
               }
@@ -676,7 +706,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/unauthorizedError"
+                    "$ref": "#/components/serverResponseExample/unauthorizedError"
                   }
                 }
               }
@@ -686,7 +716,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/getGameByIdNotFoundError"
+                    "$ref": "#/components/serverResponseExample/getGameByIdNotFoundError"
                   }
                 }
               }
@@ -696,7 +726,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/serverResponseExample/serverError"
+                    "$ref": "#/components/serverResponseExample/serverError"
                   }
                 }
               }
@@ -704,13 +734,13 @@
           }
         }
       },
-      "/wallpapers": {
+      "/wallpaper": {
           "get": {
             "tags": [
               "Wallpapers"
             ],
             "summary": "Returns Wallpapers",
-            "description": "This endpoint will get all wallpapers",
+            "description": "This endpoint will get all wallpapers.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Wallpaper Data</td>\n    <td>Return all the wallpapers.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "responses": {
               "200": {
@@ -743,7 +773,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -753,7 +783,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -765,14 +795,14 @@
               "Wallpapers"
             ],
             "summary": "Create a new Wallpaper",
-            "description": "This endpoint will create new wallpaper",
+            "description": "This endpoint will create a new wallpaper.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Wallpaper Request</td>\n    <td>Returns the created wallpaper.</td>\n  </tr>\n  <tr>\n    <td>400</td>\n    <td>Bad Request</td>\n    <td>Returns the validation errors.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "requestBody": {
               "description": "Wallpaper Request Object",
               "required": true,
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/schemas/wallpaper"
+                    "$ref": "#/components/schemas/wallpaper"
                   }
                 }
               }
@@ -786,7 +816,7 @@
                 "content": {
                   "application/json": {
                   "schema": {
-                  "$ref": "#/serverResponseExample/createWallpaperSuccess"
+                  "$ref": "#/components/serverResponseExample/createWallpaperSuccess"
                     }
                   }
                 }
@@ -796,7 +826,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/createWallpaperError"
+                      "$ref": "#/components/serverResponseExample/createWallpaperError"
                     }
                   }
                 }
@@ -806,7 +836,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -816,7 +846,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -839,7 +869,7 @@
               "Wallpapers"
             ],
             "summary": "Get Wallpaper with given ID",
-            "description": "This endpoint will create Wallpaper with given id",
+            "description": "This endpoint will get wallpaper by given ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Wallpaper Data</td>\n    <td>Returns the wallpaper with given ID.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Wallpaper Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "parameters": [
               {
@@ -848,7 +878,7 @@
                 "required": true,
                 "description": "Wallpaper id",
                 "schema": {
-                  "$ref": "#/schemas/id"
+                  "$ref": "#/components/schemas/id"
                 }
               }
             ],
@@ -858,7 +888,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getWallpaperByIdSuccess"
+                      "$ref": "#/components/serverResponseExample/getWallpaperByIdSuccess"
                     }
                   }
                 }
@@ -868,7 +898,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -878,7 +908,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getWallpaperByIdNotFoundError"
+                      "$ref": "#/components/serverResponseExample/getWallpaperByIdNotFoundError"
                     }
                   }
                 }
@@ -888,7 +918,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -897,7 +927,7 @@
           },
           "put": {
             "summary": "Update a Wallpaper by ID",
-            "description": "This endpoint will update Wallpaper by ID",
+            "description": "This endpoint will update a wallpaper by given ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Wallpaper Data</td>\n    <td>Updates the wallpaper with given ID.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Wallpaper Request Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "tags": [
               "Wallpapers"
@@ -909,7 +939,7 @@
                 "required": true,
                 "description": "Wallpapers",
                 "schema": {
-                  "$ref": "#/schemas/id"
+                  "$ref": "#/components/schemas/id"
                 }
               }
             ],
@@ -919,7 +949,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/schemas/wallpaper"
+                    "$ref": "#/components/schemas/wallpaper"
                   }
                 }
               }
@@ -933,7 +963,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/updateWallpaperByIdSuccess"
+                      "$ref": "#/components/serverResponseExample/updateWallpaperByIdSuccess"
                     }
                   }
                 }
@@ -943,7 +973,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -953,7 +983,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getWallpaperByIdNotFoundError"
+                      "$ref": "#/components/serverResponseExample/getWallpaperByIdNotFoundError"
                     }
                   }
                 }
@@ -963,7 +993,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -972,7 +1002,7 @@
           },
           "delete": {
             "summary": "Delete Wallpaper by ID",
-            "description": "This endpoint will Delete Wallpaper by ID",
+            "description": "This API Endpoint will delete wallpaper by ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Wallpaper</td>\n    <td>Wallpaper Deleted Successfully.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Wallpaper Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "tags": [
               "Wallpapers"
@@ -984,7 +1014,7 @@
                 "required": true,
                 "description": "Wallpaper",
                 "schema": {
-                  "$ref": "#/schemas/id"
+                  "$ref": "#/components/schemas/id"
                 }
               }
             ],
@@ -994,7 +1024,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/deleteWallpaperByIdSuccess"
+                      "$ref": "#/components/serverResponseExample/deleteWallpaperByIdSuccess"
                     }
                   }
                 }
@@ -1004,7 +1034,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -1014,7 +1044,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getWallpaperByIdNotFoundError"
+                      "$ref": "#/components/serverResponseExample/getWallpaperByIdNotFoundError"
                     }
                   }
                 }
@@ -1024,7 +1054,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -1032,13 +1062,13 @@
             }
           }
       },
-      "/tones": {
+      "/tone": {
           "get": {
             "tags": [
               "Tones"
             ],
             "summary": "Return tones",
-            "description": "This endpoint will get tones",
+            "description": "This endpoint will get all tones.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Tone Data</td>\n    <td>Return all the tones.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "responses": {
               "200": {
@@ -1073,7 +1103,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -1083,7 +1113,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -1095,14 +1125,14 @@
               "Tones"
             ],
             "summary": "Create a new tone",
-            "description": "This endpoint will create a new tone",
+            "description": "This endpoint will create a new tone.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>tone Created</td>\n    <td>Returns the created tone</td>\n  </tr>\n  <tr>\n    <td>400</td>\n    <td>Bad Request</td>\n    <td>Returns the validation errors.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "requestBody": {
               "description": "tone Object",
               "required": true,
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/schemas/tone"
+                    "$ref": "#/components/schemas/tone"
                   }
                 }
               }
@@ -1116,7 +1146,7 @@
                 "content": {
                   "application/json": {
                   "schema": {
-                  "$ref": "#/serverResponseExample/createToneSuccess"
+                  "$ref": "#/components/serverResponseExample/createToneSuccess"
                     }
                   }
                 }
@@ -1126,7 +1156,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/createToneError"
+                      "$ref": "#/components/serverResponseExample/createToneError"
                     }
                   }
                 }
@@ -1136,7 +1166,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -1146,7 +1176,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -1169,7 +1199,7 @@
               "Tones"
             ],
             "summary": "Get tone with given ID",
-            "description": "This endpoint will get tone by ID",
+            "description": "This endpoint will get Tone by given ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>tone Data</td>\n    <td>Returns the tone with given ID.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Tone Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "parameters": [
               {
@@ -1178,7 +1208,7 @@
                 "required": true,
                 "description": "tone id",
                 "schema": {
-                  "$ref": "#/schemas/id"
+                  "$ref": "#/components/schemas/id"
                 }
               }
             ],
@@ -1188,7 +1218,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getToneByIdSuccess"
+                      "$ref": "#/components/serverResponseExample/getToneByIdSuccess"
                     }
                   }
                 }
@@ -1198,7 +1228,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -1208,7 +1238,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getToneByIdNotFoundError"
+                      "$ref": "#/components/serverResponseExample/getToneByIdNotFoundError"
                     }
                   }
                 }
@@ -1218,7 +1248,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -1227,7 +1257,7 @@
           },
           "put": {
             "summary": "Update a Tone by ID",
-            "description": "This endpoint will update Tone by ID",
+            "description": "This endpoint will update a tone by given ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>Tone Data</td>\n    <td>Updates the tone with given ID.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Tone Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "tags": [
               "Tones"
@@ -1239,7 +1269,7 @@
                 "required": true,
                 "description": "Update Tone",
                 "schema": {
-                  "$ref": "#/schemas/id"
+                  "$ref": "#/components/schemas/id"
                 }
               }
             ],
@@ -1249,7 +1279,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/schemas/tone"
+                    "$ref": "#/components/schemas/tone"
                   }
                 }
               }
@@ -1263,7 +1293,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/updateToneByIdSuccess"
+                      "$ref": "#/components/serverResponseExample/updateToneByIdSuccess"
                     }
                   }
                 }
@@ -1273,7 +1303,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -1283,7 +1313,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getToneByIdNotFoundError"
+                      "$ref": "#/components/serverResponseExample/getToneByIdNotFoundError"
                     }
                   }
                 }
@@ -1293,7 +1323,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -1302,7 +1332,7 @@
           },
           "delete": {
             "summary": "Delete Tone by ID",
-            "description": "This endpoint will Delete Tone by ID",
+            "description": "This API Endpoint will delete Tone by ID.\n\n__Usage__:\n\n1) Click on the **Try it out** button.\n\n2) Click on the **Execute** button to submit the request.\n\n**The below table defines the HTTP Status codes that this API may return**\n\n<table>\n  <tr>\n    <td>Status Code</td>\n    <td>Description</td>\n    <td>Reason</td>\n  </tr>\n  <tr>\n    <td>200</td>\n    <td>tone</td>\n    <td>Tone Deleted Successfully.</td>\n  </tr>\n  <tr>\n    <td>401</td>\n    <td>Unauthorized</td>\n    <td>If Missing Authorization Header.</td>\n  </tr>\n  <tr>\n    <td>404</td>\n    <td>Not Found</td>\n    <td>Tone Not Found</td>\n  </tr>\n  <tr>\n    <td>500</td>\n    <td>Server Error</td>\n    <td>If Internal server error occured.</td>\n  </tr>\n</table>",
             "security":[{"JWT": {} }],
             "tags": [
               "Tones"
@@ -1314,7 +1344,7 @@
                 "required": true,
                 "description": "Delete Tone",
                 "schema": {
-                  "$ref": "#/schemas/id"
+                  "$ref": "#/components/schemas/id"
                 }
               }
             ],
@@ -1324,7 +1354,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/deleteToneByIdSuccess"
+                      "$ref": "#/components/serverResponseExample/deleteToneByIdSuccess"
                     }
                   }
                 }
@@ -1334,7 +1364,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/unauthorizedError"
+                      "$ref": "#/components/serverResponseExample/unauthorizedError"
                     }
                   }
                 }
@@ -1344,7 +1374,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/getToneByIdNotFoundError"
+                      "$ref": "#/components/serverResponseExample/getToneByIdNotFoundError"
                     }
                   }
                 }
@@ -1354,7 +1384,7 @@
                 "content": {
                   "application/json": {
                     "schema": {
-                      "$ref": "#/serverResponseExample/serverError"
+                      "$ref": "#/components/serverResponseExample/serverError"
                     }
                   }
                 }
@@ -1371,18 +1401,68 @@
           "type": "apiKey",
           "description": "JWT authorization token. Include 'Bearer' followed by a space and the token value."
         }
-      }
       },
     "schemas": {
-      "id": {
-          "properties": {
-            "id": {
-              "type": "string"
+        "id": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
             }
+        },
+        "login": {
+            "type": "object",
+            "required": ["username", "password"],
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                "password": {
+                    "type": "string",
+                    "format": "number"
+                  }
+            }
+        },
+        "adminlogin": {
+          "type": "object",
+          "required": ["username", "password", "role"],
+          "properties": {
+              "username": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "password": {
+                  "type": "string",
+                  "format": "number"
+                },
+              "role": {
+                  "type": "string",
+                  "format": "string"
+                }
           }
       },
-      "login": {
+        "signup": {
           "type": "object",
+          "required": ["username", "password"],
+          "properties": {
+              "username": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "password": {
+                  "type": "string",
+                  "format": "string"
+                },
+              "role": {
+                  "type": "string",
+                  "format": "string"
+                }
+          }
+        },
+        "logout": {
+          "type": "object",
+          "required": ["username", "password"],
           "properties": {
               "username": {
                   "type": "string",
@@ -1393,352 +1473,334 @@
                   "format": "number"
                 }
           }
-      },
-      "signup": {
-        "type": "object",
-        "required": ["username", "password"],
-        "properties": {
-            "username": {
-                "type": "string",
-                "format": "string"
-              },
-            "password": {
-                "type": "string",
-                "format": "string"
-              },
-            "role": {
-                "type": "string",
-                "format": "string"
-              }
-        }
-      },
-      "logout": {
-        "type": "object",
-        "required": ["username", "password"],
-        "properties": {
-            "username": {
-                "type": "string",
-                "format": "string"
-              },
-            "password": {
-                "type": "string",
-                "format": "number"
-              }
-        }
-      },
-      "game": {
-          "type": "object",
-          "properties": {
-              "description": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "imageUrl": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "title": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "iframe": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "thumbnail": {
-                  "type": "string",
-                  "format": "string"
-                }
-          }
-      },
-      "tone": {
-          "type": "object",
-          "properties": {
+        },
+        "game": {
+            "type": "object",
+            "required": ["description", "imageUrl", "title"],
+            "properties": {
                 "description": {
-                  "type": "string",
-                  "format": "string"
-                },
-                "audio": {
-                  "type": "string",
-                  "format": "string"
-                },
-                "downloads": {
-                  "type": "string",
-                  "format": "string"
-                },
+                    "type": "string",
+                    "format": "string"
+                  },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "string"
+                  },
                 "title": {
-                  "type": "string",
-                  "format": "string"
-                },
-                "urlTitle": {
-                  "type": "string",
-                  "format": "string"
-                },
+                    "type": "string",
+                    "format": "string"
+                  },
+                "iframe": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                "thumbnail": {
+                    "type": "string",
+                    "format": "string"
+                  }
+            }
+        },
+        "tone": {
+            "type": "object",
+            "required": ["description", "audio", "downloads", "urlTitle", "title", "visited"],
+            "properties": {
+                  "description": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "audio": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "downloads": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "title": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "urlTitle": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "visited": {
+                    "type": "string",
+                    "format": "string"
+                  }
+            }
+        },
+        "wallpaper": {
+            "type": "object",
+            "required": ["description", "downloads", "imageURL", "title", "visited"],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                "imageURL": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                "title": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                "downloads": {
+                    "type": "string",
+                    "format": "string"
+                  },
                 "visited": {
-                  "type": "string",
-                  "format": "string"
-                }
-          }
-      },
-      "wallpaper": {
-          "type": "object",
-          "properties": {
-              "description": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "imageURL": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "title": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "downloads": {
-                  "type": "string",
-                  "format": "string"
-                },
-              "visited": {
-                  "type": "string",
-                  "format": "string"
-                }
-          }
-      },
-      "games": {
-          "type": "object",
-          "properties": {
-            "game": {
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/schemas/game"
+                    "type": "string",
+                    "format": "string"
+                  }
             }
-          }
-       }
-      },
-      "tones": {
-          "type": "object",
-          "properties": {
-            "tone": {
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/schemas/tone"
+        },
+        "games": {
+            "type": "object",
+            "properties": {
+              "game": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/game"
+              }
             }
-          }
-       }
-      },
-      "wallpapers": {
-          "type": "object",
-          "properties": {
-            "contact": {
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/schemas/wallpaper"
+         }
+        },
+        "tones": {
+            "type": "object",
+            "properties": {
+              "tone": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/tone"
+              }
             }
-          }
-       }
+         }
+        },
+        "wallpapers": {
+            "type": "object",
+            "properties": {
+              "wallpaper": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/wallpaper"
+              }
+            }
+         }
+        }
+      },
+    "serverResponseExample": {
+      "notFound": {
+        "message": "Not found"
+      },
+      "serverError": {
+        "example": {
+          "code": 500,
+          "message": "Internal server error"
+        }
+      },
+      "logoutUnauthorizedError": {
+        "example": {
+          "msg": "Token has been revoked"
+        }
+      },
+      "invalidcredentialsError": {
+        "example": {
+          "msg": "Invalid Username or Password"
+        }
+      },
+      "unauthorizedError": {
+        "example": {
+          "msg": "Missing Authorization Header"
+        }
+      },
+      "createLoginError": {
+        "example": {
+          "code": 400,
+          "message": "Username is required, Password is required"
+        }
+      },
+      "createSignupError": {
+        "example": {
+          "code": 400,
+          "message": "Username is required, Password is required, Role is required for Admins"
+        }
+      },
+      "createLogoutError": {
+        "example": {
+          "message": "Access Token is required "
+        }
+      },
+      "createGameError": {
+        "example": {
+          "code": 400,
+          "message": "Description is required, Title is required, ImageUrl is required"
+        }
+      },
+      "createWallpaperError": {
+        "example": {
+          "code": 400,
+          "message": "Description is required, Title is required, UrlTitle is required"
+        }
+      },
+      "createToneError": {
+        "example": {
+          "code": 400,
+          "message": "Audio is required, Title is required, UrlTitle is required"
+        }
+      },
+      "createLoginSuccess": {
+        "example": {
+          "access_token" :"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwMTMyNDI0NSwianRpIjoiMGJkNWI2ZGQtYjc5Yy00ODBkLWE3NzAtMzMyYmVkMWFkMWU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InVzZXIxIiwibmJmIjoxNzAxMzI0MjQ1LCJleHAiOjE3MDEzMjUxNDV9.E1nzEIXCqMMmmE5eGbo6zdEOpVFV_bWeqFzzZ8Zg_48"
+        }
+      },
+      "createSignupSuccess": {
+        "example": {
+          "message": "User registered successfully"
+        }
+      },
+      "createLogoutSuccess": {
+        "example": {
+          "message": "Successfully logged out"
+        }
+      },
+      "createGameSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "imageUrl": "www.xyz.com",
+          "title": "Games",
+          "iframe": "http://xyz.com/index.html",
+          "thumbnail": "/assets/games/cricket.jpg"
+        }
+      },
+      "createWallpaperSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "imageURL":"/assets/wallpaper.png",
+          "title": "wallpapers",
+          "downloads": "5k",
+          "visited": "9k"
+        }
+      },
+      "createToneSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "audio":"https://xyz.com",
+          "Downloads": "5.5k",
+          "title": "Three Little Birds",
+          "urlTitle": "three-little-birds",
+          "visited": "10.5k"
+        }
+      },
+      "createGameImageSuccess": {
+        "example": {
+          "file_url": "https://tapzzi.fra1.digitaloceanspaces.com/tapzzi/filename"
+        }
+      },
+      "getGameByIdSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "imageUrl": "www.xyz.com",
+          "title": "Games",
+          "iframe": "http://xyz.com/index.html",
+          "thumbnail": "/assets/games/cricket.jpg"
+        }
+      },
+      "getWallpaperByIdSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "imageURL":"/assets/wallpaper.png",
+          "title": "wallpapers",
+          "downloads": "5k",
+          "visited": "9k"
+        }
+      },
+      "getToneByIdSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "audio":"https://xyz.com",
+          "Downloads": "5.5k",
+          "title": "Three Little Birds",
+          "urlTitle": "three-little-birds",
+          "visited": "10.5k"
+        }
+      },
+      "getGameByIdNotFoundError": {
+        "example": {
+          "code": 404,
+          "message": "Game not found" 
+        }
+      },
+      "getWallpaperByIdNotFoundError": {
+        "example": {
+          "code": 404,
+          "message": "Wallpaper not found" 
+        }
+      },
+      "getToneByIdNotFoundError": {
+        "example": {
+          "code": 404,
+          "message": "Tone not found" 
+        }
+      },
+      "updateGameByIdSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "imageUrl": "www.xyz.com",
+          "title": "Games",
+          "iframe": "http://xyz.com/index.html",
+          "thumbnail": "/assets/games/cricket.jpg"
+        }
+      },
+      "updateWallpaperByIdSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "imageURL":"/assets/wallpaper.png",
+          "title": "wallpapers",
+          "downloads": "5k",
+          "visited": "9k"
+        }
+      },
+      "updateToneByIdSuccess": {
+        "example": {
+          "_id":"655cc081add35235c1c1682c",
+          "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
+          "audio":"https://xyz.com",
+          "Downloads": "5.5k",
+          "title": "Three Little Birds",
+          "urlTitle": "three-little-birds",
+          "visited": "10.5k"
+        }
+      },
+      "deleteGameByIdSuccess": {
+        "example": {
+          "message": "Game Deleted successfully"
+        }
+      },
+      "deleteWallpaperByIdSuccess": {
+        "example": {
+          "message": "Wallpaper Deleted successfully"
+        }
+      },
+      "deleteGameImageByIdSuccess": {
+        "example": {
+          "message": "Game Image Deleted successfully"
+        }
+      },
+      "deleteToneByIdSuccess": {
+        "example": {
+          "message": "Tone Deleted successfully"
+        }
       }
-    },
-  "serverResponseExample": {
-    "notFound": {
-      "message": "Not found"
-    },
-    "serverError": {
-      "example": {
-        "code": 500,
-        "message": "Internal server error"
       }
-    },
-    "unauthorizedError": {
-      "example": {
-        "msg": "Missing Authorization Header"
-      }
-    },
-    "createLoginError": {
-      "example": {
-        "code": 400,
-        "message": "Username is required, Password is required"
-      }
-    },
-    "createSignupError": {
-      "example": {
-        "code": 400,
-        "message": "Username is required, Password is required"
-      }
-    },
-    "createLogoutError": {
-      "example": {
-        "message": "Access Token is required "
-      }
-    },
-    "createGameError": {
-      "example": {
-        "code": 400,
-        "message": "Description is required, Title is required, ImageUrl is required"
-      }
-    },
-    "createWallpaperError": {
-      "example": {
-        "code": 400,
-        "message": "Description is required, Title is required, UrlTitle is required"
-      }
-    },
-    "createToneError": {
-      "example": {
-        "code": 400,
-        "message": "Audio is required, Title is required, UrlTitle is required"
-      }
-    },
-    "createLoginSuccess": {
-      "example": {
-        "access_token" :"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwMTMyNDI0NSwianRpIjoiMGJkNWI2ZGQtYjc5Yy00ODBkLWE3NzAtMzMyYmVkMWFkMWU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InVzZXIxIiwibmJmIjoxNzAxMzI0MjQ1LCJleHAiOjE3MDEzMjUxNDV9.E1nzEIXCqMMmmE5eGbo6zdEOpVFV_bWeqFzzZ8Zg_48"
-      }
-    },
-    "createSignupSuccess": {
-      "example": {
-        "message": "User registered successfully"
-      }
-    },
-    "createLogoutSuccess": {
-      "example": {
-        "message": "Successfully logged out"
-      }
-    },
-    "createGameSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "www.xyz.com",
-        "title": "Games",
-        "iframe": "http://xyz.com/index.html",
-        "thumbnail": "/assets/games/cricket.jpg"
-      }
-    },
-    "createWallpaperSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageURL":"/assets/wallpaper.png",
-        "title": "wallpapers",
-        "downloads": "5k",
-        "visited": "9k"
-      }
-    },
-    "createToneSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"https://xyz.com",
-        "Downloads": "5.5k",
-        "title": "Three Little Birds",
-        "urlTitle": "three-little-birds",
-        "visited": "10.5k"
-      }
-    },
-    "createGameImageSuccess": {
-      "example": {
-        "file_url": "https://tapzzi.fra1.digitaloceanspaces.com/tapzzi/filename"
-      }
-    },
-    "getGameByIdSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "www.xyz.com",
-        "title": "Games",
-        "iframe": "http://xyz.com/index.html",
-        "thumbnail": "/assets/games/cricket.jpg"
-      }
-    },
-    "getWallpaperByIdSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageURL":"/assets/wallpaper.png",
-        "title": "wallpapers",
-        "downloads": "5k",
-        "visited": "9k"
-      }
-    },
-    "getToneByIdSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"https://xyz.com",
-        "Downloads": "5.5k",
-        "title": "Three Little Birds",
-        "urlTitle": "three-little-birds",
-        "visited": "10.5k"
-      }
-    },
-    "getGameByIdNotFoundError": {
-      "example": {
-        "code": 404,
-        "message": "Game not found" 
-      }
-    },
-    "getWallpaperByIdNotFoundError": {
-      "example": {
-        "code": 404,
-        "message": "Wallpaper not found" 
-      }
-    },
-    "getToneByIdNotFoundError": {
-      "example": {
-        "code": 404,
-        "message": "Tone not found" 
-      }
-    },
-    "updateGameByIdSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description":"Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageUrl": "www.xyz.com",
-        "title": "Games",
-        "iframe": "http://xyz.com/index.html",
-        "thumbnail": "/assets/games/cricket.jpg"
-      }
-    },
-    "updateWallpaperByIdSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "imageURL":"/assets/wallpaper.png",
-        "title": "wallpapers",
-        "downloads": "5k",
-        "visited": "9k"
-      }
-    },
-    "updateToneByIdSuccess": {
-      "example": {
-        "_id":"655cc081add35235c1c1682c",
-        "description": "Explore and play bite-sized games anytime, anywhere-no downloads, just pure entertainment on the go!",
-        "audio":"https://xyz.com",
-        "Downloads": "5.5k",
-        "title": "Three Little Birds",
-        "urlTitle": "three-little-birds",
-        "visited": "10.5k"
-      }
-    },
-    "deleteGameByIdSuccess": {
-      "example": {
-        "message": "Game Deleted successfully"
-      }
-    },
-    "deleteWallpaperByIdSuccess": {
-      "example": {
-        "message": "Wallpaper Deleted successfully"
-      }
-    },
-    "deleteGameImageByIdSuccess": {
-      "example": {
-        "message": "Game Image Deleted successfully"
-      }
-    },
-    "deleteToneByIdSuccess": {
-      "example": {
-        "message": "Tone Deleted successfully"
-      }
-    }
     }
   }
