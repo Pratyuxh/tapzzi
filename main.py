@@ -318,6 +318,12 @@ DO_BUCKET_NAME = 'tapzzi'  # Replace with your DigitalOcean Spaces bucket name
 
 # Create a connection to DigitalOcean Spaces
 # s3 = boto3.client('s3', endpoint_url=DO_SPACES_ENDPOINT, aws_access_key_id=DO_ACCESS_KEY, aws_secret_access_key=DO_SECRET_KEY)
+def get_s3_client():
+    return boto3.client('s3',
+                        aws_access_key_id=DO_ACCESS_KEY,
+                        aws_secret_access_key=DO_SECRET_KEY,
+                        endpoint_url=DO_SPACES_ENDPOINT)
+
 
 def allowed_file_size(file):
     return file.content_length <= MAX_FILE_SIZE_BYTES
@@ -327,11 +333,7 @@ def allowed_file(filename):
 
 def upload_to_digitalocean(file, file_name, device_type, game_id):
     try:
-        s3 = boto3.client('s3',
-            aws_access_key_id='DO00FVYZELDGLP9XU3Y4',
-            aws_secret_access_key='3SuOMJtlfNklPrhwv9U3FmkgnhVXbKU+u3fGG1zaZ/g',
-            endpoint_url=DO_SPACES_ENDPOINT
-        )
+        s3 = get_s3_client()
 
         # Create a folder with the specified device type
         folder_path = f"{device_type}/"
@@ -365,11 +367,7 @@ def upload_and_delete_image(id):
     try:
         file_name = None
 
-        s3 = boto3.client('s3',
-            aws_access_key_id='DO00H8HLFYNACV6LJ3GP',
-            aws_secret_access_key='fKbFfbNG2PcuyLCZ79xjePWYjmCP9wGCNdWgfgxCTnY',
-            endpoint_url=DO_SPACES_ENDPOINT
-        )
+        s3 = get_s3_client()
 
         if request.method == 'POST':
             # Check if the POST request has the file part
@@ -398,11 +396,7 @@ def upload_and_delete_image(id):
                 return jsonify({"error": "No file specified for deletion"}), 400
 
             # Delete the file from DigitalOcean Spaces
-            s3 = boto3.client('s3',
-            aws_access_key_id='DO00H8HLFYNACV6LJ3GP',
-            aws_secret_access_key='fKbFfbNG2PcuyLCZ79xjePWYjmCP9wGCNdWgfgxCTnY',
-            endpoint_url=DO_SPACES_ENDPOINT
-        )
+            s3 = get_s3_client()
             # filename = request.json.get('filename')  # Assuming you send the filename in the request body
 
             delete_file_from_digitalocean(file_name)
@@ -418,13 +412,7 @@ def upload_and_delete_image(id):
 
 def delete_file_from_digitalocean(file_name):
     try:
-        s3 = boto3.client('s3',
-            aws_access_key_id='DO00H8HLFYNACV6LJ3GP',
-            aws_secret_access_key='fKbFfbNG2PcuyLCZ79xjePWYjmCP9wGCNdWgfgxCTnY',
-            endpoint_url=DO_SPACES_ENDPOINT
-        )
-
-        # Delete the file from DigitalOcean Spaces
+        s3 = get_s3_client()
         s3.delete_object(Bucket=DO_BUCKET_NAME, Key=file_name)
 
     except NoCredentialsError:
