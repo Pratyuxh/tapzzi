@@ -274,11 +274,10 @@ def update_game(id):
     elif result.modified_count == 0:
         return jsonify({"error": "Game not updated"}), 404
     else:
-        return jsonify(response_data)
+        return jsonify(merged_data)
 
 # Get all games
 @app.route('/game', methods=['GET'])
-@jwt_required()
 def get_games():
     games = list(collection1.find())
     data = []
@@ -289,8 +288,9 @@ def get_games():
 
 # Get a specific game by ID
 @app.route('/game/<id>')
-@jwt_required()
 def game(id):
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
     game = collection1.find_one({'_id':ObjectId(id)})
     if game:
         game["_id"] = str(game["_id"])
@@ -302,8 +302,11 @@ def game(id):
 @app.route('/game/<id>', methods=['DELETE'])
 @jwt_required()
 def delete_game(id):
-    id = ObjectId(id)
+    # id = ObjectId(id)
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
     result = collection1.delete_one({"_id": ObjectId(id)})
+
     if result.deleted_count > 0:
         return jsonify({"message": "Game deleted successfully"})
     else:
@@ -331,25 +334,44 @@ def allowed_file_size(file):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def upload_to_digitalocean(file, file_name, device_type, game_id):
-    try:
-        s3 = get_s3_client()
+from urllib.parse import quote
 
-        # Create a folder with the specified device type
-        folder_path = f"{device_type}/"
-        file_path = os.path.join(folder_path, file_name)
+def upload_to_digitalocean(file, file_name, device_type, id):
+    try:
+        s3 = boto3.client('s3',
+        aws_access_key_id=DO_ACCESS_KEY,
+        aws_secret_access_key=DO_SECRET_KEY,
+        endpoint_url=DO_SPACES_ENDPOINT
+        )
+
+        # Replace spaces in the file name with underscores
+        file_name = file_name.strip().replace(' ', '_')
+
+        # URL-encode the file name
+        encoded_file_name = quote(file_name, safe='')
+
+        unique_filename = f"{encoded_file_name}"
+
+        folder_path = f"{device_type}/{id}/"  # Include the id in the folder path
+        # file_path = os.path.join(folder_path, file_name)
+        file_path = os.path.join(folder_path, unique_filename)
 
         # Upload the file to DigitalOcean Spaces
-        s3.upload_fileobj(file, DO_BUCKET_NAME, file_path)
+        s3.upload_fileobj(
+            file,
+            DO_BUCKET_NAME,
+            file_path,
+            ExtraArgs={'ACL': 'public-read'}  # Set ACL to public-read
+        )
 
         # Get the public URL of the uploaded file
-        file_url = f"{DO_SPACES_ENDPOINT}/{DO_BUCKET_NAME}/{file_path}"
+        file_url = f"{DO_SPACES_ENDPOINT}/{DO_BUCKET_NAME}/{folder_path}{file_name}"
 
         file_info = {
             'filename': file_name,
             'device_type': device_type,
             'url': file_url,
-            'game_id': game_id  # Assuming you have an 'id' variable available in your code
+            'id': id
         }
         files_collection.insert_one(file_info)
 
@@ -360,22 +382,30 @@ def upload_to_digitalocean(file, file_name, device_type, game_id):
     except Exception as e:
         raise Exception(str(e))
 
-# Create a game image
-@app.route('/game/<id>/image', methods=['POST', 'DELETE'])
+@app.route('/game/image', methods=['POST', 'DELETE'])
 @jwt_required()
-def upload_and_delete_image(id):
+def upload_and_delete_image():
     try:
         file_name = None
 
-        s3 = get_s3_client()
+        s3 = boto3.client('s3',
+        aws_access_key_id=DO_ACCESS_KEY,
+        aws_secret_access_key=DO_SECRET_KEY,
+        endpoint_url=DO_SPACES_ENDPOINT
+        )
 
         if request.method == 'POST':
             # Check if the POST request has the file part
-            if 'file' not in request.files or 'device_type' not in request.form:
-                return jsonify({"error": "No file or device type provided"}), 400
+            if 'file' not in request.files or 'device_type' not in request.form or 'id' not in request.form:
+                return jsonify({"error": "No file, device type, or id provided"}), 400
 
             file = request.files['file']
             device_type = request.form['device_type']
+            id = request.form['id']  # Add this line to get the id from the request form
+
+            # Check if the id exists in the database
+            if not collection1.find_one({"_id": ObjectId(id)}):
+                return jsonify({"error": "ID does not exist"}), 404
 
             # If the user does not select a file, the browser submits an empty file without a filename
             if file.filename == '':
@@ -384,36 +414,26 @@ def upload_and_delete_image(id):
             file_name = f"{file.filename}"
 
             # Upload the file to DigitalOcean Spaces and get the file URL
-            file_url = upload_to_digitalocean(file, file_name, device_type, id)
+            file_url = upload_to_digitalocean(file, file_name, device_type, id)  # Pass id parameter here
 
             return jsonify({'message': 'Image uploaded successfully', 'file_url': file_url})
-
-        elif request.method == 'DELETE':
-
-            file_name = request.json.get('filename') or request.args.get('filename')
-
-            if file_name is None:
-                return jsonify({"error": "No file specified for deletion"}), 400
-
-            # Delete the file from DigitalOcean Spaces
-            s3 = get_s3_client()
-            # filename = request.json.get('filename')  # Assuming you send the filename in the request body
-
-            delete_file_from_digitalocean(file_name)
-
-            s3.delete_object(Bucket= DO_BUCKET_NAME, Key=file_name)
-
-            files_collection.delete_one({'filename': file_name})
-
-            return {'message': f'{file_name} deleted successfully'}
-
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def delete_file_from_digitalocean(file_name):
+def delete_file_from_digitalocean():
     try:
-        s3 = get_s3_client()
-        s3.delete_object(Bucket=DO_BUCKET_NAME, Key=file_name)
+        s3 = boto3.client('s3',
+        aws_access_key_id=DO_ACCESS_KEY,
+        aws_secret_access_key=DO_SECRET_KEY,
+        endpoint_url=DO_SPACES_ENDPOINT
+    )
+
+        # Delete the file from DigitalOcean Spaces
+        data = request.json
+        object_key = data.get('object_key')
+
+        # Delete the object from the Space
+        response = s3.delete_object(Bucket=DO_BUCKET_NAME, Key=object_key)
 
     except NoCredentialsError:
         raise Exception('Credentials not available. Check your DigitalOcean Spaces access key and secret key.')
@@ -424,21 +444,166 @@ def delete_file_from_mongodb(file_name):
     # Delete the file information from MongoDB
     files_collection.delete_one({'filename': file_name})
 
-# Delete a game image
-@app.route('/game/<id>/image/<filename>', methods=['DELETE'])
+# Check if file exists in DigitalOcean Spaces bucket
+def file_exists_in_digitalocean(filename):
+    s3 = boto3.client('s3',
+        aws_access_key_id=DO_ACCESS_KEY,
+        aws_secret_access_key=DO_SECRET_KEY,
+        endpoint_url=DO_SPACES_ENDPOINT
+    )
+    try:
+        s3.head_object(Bucket=DO_BUCKET_NAME, Key=filename)
+        return True
+    except:
+        return False
+
+@app.route('/game/image/<id>/<filename>', methods=['DELETE'])
 @jwt_required()
 def delete_uploaded_image(id, filename):
-    try:
-        # Delete the file from DigitalOcean Spaces
-        delete_file_from_digitalocean(filename)
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
 
-        # Delete the file information from MongoDB
+    if not allowed_file(filename):
+        return jsonify({"error": "Invalid filename format"}), 404
+
+    try:
+        
+        delete_file_from_digitalocean()
         delete_file_from_mongodb(filename)
 
-        return {'message': f'File {filename} deleted successfully'}
+        return {'message': f'File {filename} for ID {id} deleted successfully'}
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+s3 = boto3.client('s3',
+                  aws_access_key_id=DO_ACCESS_KEY,
+                  aws_secret_access_key=DO_SECRET_KEY,
+                  endpoint_url=DO_SPACES_ENDPOINT)
+    
+@app.route('/delete-gameimage', methods=['POST'])
+@jwt_required()
+def delete_object():
+    try:
+        # Get the object key from the request
+        data = request.json
+        object_key = data.get('object_key')
+
+        # Delete the object from the Space
+        response = s3.delete_object(Bucket=DO_BUCKET_NAME, Key=object_key)
+
+        return jsonify({'message': 'File deleted successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# def upload_to_digitalocean(file, file_name, device_type, game_id):
+#     try:
+#         s3 = get_s3_client()
+
+#         # Create a folder with the specified device type
+#         folder_path = f"{device_type}/"
+#         file_path = os.path.join(folder_path, file_name)
+
+#         # Upload the file to DigitalOcean Spaces
+#         s3.upload_fileobj(file, DO_BUCKET_NAME, file_path)
+
+#         # Get the public URL of the uploaded file
+#         file_url = f"{DO_SPACES_ENDPOINT}/{DO_BUCKET_NAME}/{file_path}"
+
+#         file_info = {
+#             'filename': file_name,
+#             'device_type': device_type,
+#             'url': file_url,
+#             'game_id': game_id  # Assuming you have an 'id' variable available in your code
+#         }
+#         files_collection.insert_one(file_info)
+
+#         return file_url
+
+#     except NoCredentialsError:
+#         raise Exception('Credentials not available. Check your DigitalOcean Spaces access key and secret key.')
+#     except Exception as e:
+#         raise Exception(str(e))
+
+# # Create a game image
+# @app.route('/game/<id>/image', methods=['POST', 'DELETE'])
+# @jwt_required()
+# def upload_and_delete_image(id):
+#     try:
+#         file_name = None
+
+#         s3 = get_s3_client()
+
+#         if request.method == 'POST':
+#             # Check if the POST request has the file part
+#             if 'file' not in request.files or 'device_type' not in request.form:
+#                 return jsonify({"error": "No file or device type provided"}), 400
+
+#             file = request.files['file']
+#             device_type = request.form['device_type']
+
+#             # If the user does not select a file, the browser submits an empty file without a filename
+#             if file.filename == '':
+#                 return jsonify({"error": "No selected file"}), 400
+
+#             file_name = f"{file.filename}"
+
+#             # Upload the file to DigitalOcean Spaces and get the file URL
+#             file_url = upload_to_digitalocean(file, file_name, device_type, id)
+
+#             return jsonify({'message': 'Image uploaded successfully', 'file_url': file_url})
+
+#         elif request.method == 'DELETE':
+
+#             file_name = request.json.get('filename') or request.args.get('filename')
+
+#             if file_name is None:
+#                 return jsonify({"error": "No file specified for deletion"}), 400
+
+#             # Delete the file from DigitalOcean Spaces
+#             s3 = get_s3_client()
+#             # filename = request.json.get('filename')  # Assuming you send the filename in the request body
+
+#             delete_file_from_digitalocean(file_name)
+
+#             s3.delete_object(Bucket= DO_BUCKET_NAME, Key=file_name)
+
+#             files_collection.delete_one({'filename': file_name})
+
+#             return {'message': f'{file_name} deleted successfully'}
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+
+# def delete_file_from_digitalocean(file_name):
+#     try:
+#         s3 = get_s3_client()
+#         s3.delete_object(Bucket=DO_BUCKET_NAME, Key=file_name)
+
+#     except NoCredentialsError:
+#         raise Exception('Credentials not available. Check your DigitalOcean Spaces access key and secret key.')
+#     except Exception as e:
+#         raise Exception(str(e))
+
+# def delete_file_from_mongodb(file_name):
+#     # Delete the file information from MongoDB
+#     files_collection.delete_one({'filename': file_name})
+
+# # Delete a game image
+# @app.route('/game/<id>/image/<filename>', methods=['DELETE'])
+# @jwt_required()
+# def delete_uploaded_image(id, filename):
+#     try:
+#         # Delete the file from DigitalOcean Spaces
+#         delete_file_from_digitalocean(filename)
+
+#         # Delete the file information from MongoDB
+#         delete_file_from_mongodb(filename)
+
+#         return {'message': f'File {filename} deleted successfully'}
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
 
 validation_rules2 = {
     "description": "required",
@@ -491,7 +656,10 @@ def validate_data(data, validation_rules2):
 @app.route('/tone/<id>', methods=['PUT'])
 @jwt_required()
 def update_tone(id):
-    id = ObjectId(id)
+    # id = ObjectId(id)
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404 
+
     data = request.get_json()
     existing_document = collection2.find_one({"_id": id})
 
@@ -517,12 +685,11 @@ def update_tone(id):
     elif result.modified_count == 0:
         return jsonify({"error": "Tone not updated"}), 404
     else:
-        return jsonify(response_data)
+        return jsonify(merged_data)
 
 
 # Get all tones
 @app.route('/tone', methods=['GET'])
-@jwt_required()
 def get_tones():
     tones = list(collection2.find())
     data = []
@@ -533,8 +700,10 @@ def get_tones():
 
 # Get a specific tone by ID
 @app.route('/tone/<id>')
-@jwt_required()
 def tone(id):
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
+
     tone = collection2.find_one({'_id':ObjectId(id)})
     if tone:
         tone["_id"] = str(tone["_id"])
@@ -546,7 +715,10 @@ def tone(id):
 @app.route('/tone/<id>', methods=['DELETE'])
 @jwt_required()
 def delete_tone(id):
-    id = ObjectId(id)
+    # id = ObjectId(id)
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
+
     result = collection2.delete_one({"_id": ObjectId(id)})
 
     if result.deleted_count > 0:
@@ -603,7 +775,10 @@ def validate_data(data, validation_rules3):
 @app.route('/wallpaper/<id>', methods=['PUT'])
 @jwt_required()
 def update_wallpaper(id):
-    id = ObjectId(id)
+    # id = ObjectId(id)
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
+
     data = request.get_json()
     existing_document = collection3.find_one({"_id": id})
 
@@ -628,11 +803,10 @@ def update_wallpaper(id):
     elif result.modified_count == 0:
         return jsonify({"error": "Wallpaper not updated"}), 404
     else:
-        return jsonify(response_data)
+        return jsonify(merged_data)
 
 # Get all wallpapers
 @app.route('/wallpaper', methods=['GET'])
-@jwt_required()
 def get_wallpapers():
     wallpapers = list(collection3.find())
     data = []
@@ -643,8 +817,10 @@ def get_wallpapers():
 
 # Get a specific wallpaper by ID
 @app.route('/wallpaper/<id>')
-@jwt_required()
 def wallpaper(id):
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
+
     wallpaper = collection3.find_one({'_id':ObjectId(id)})
     if wallpaper:
         wallpaper["_id"] = str(wallpaper["_id"])
@@ -657,7 +833,10 @@ def wallpaper(id):
 @app.route('/wallpaper/<id>', methods=['DELETE'])
 @jwt_required()
 def delete_wallpaper(id):
-    id = ObjectId(id)
+    # id = ObjectId(id)
+    if not ObjectId.is_valid(id):
+        return jsonify({"error": "Invalid Object ID"}), 404
+
     result = collection3.delete_one({"_id": ObjectId(id)})
 
     if result.deleted_count > 0:
